@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM-based XSS Lab - location.hash</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>🟠 DOM-based XSS Lab</h1>
+        <h2>location.hash Vulnerability</h2>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../../index.html">Home</a>
+            <span>></span>
+            <span>DOM-based XSS</span>
+        </div>
+
+        <div class="warning-banner">
+            ⚠️ FOR EDUCATIONAL PURPOSES ONLY - DO NOT USE ON REAL SYSTEMS
+        </div>
+
+        <div class="lab-description">
+            <h3>📚 What is DOM-based XSS?</h3>
+            <p>
+                <strong>DOM-based Cross-Site Scripting</strong> occurs when JavaScript reads data from a controllable
+                source (like URL parameters, hash, or localStorage) and writes it to a dangerous sink (like innerHTML)
+                without proper validation.
+            </p>
+            <p>
+                Unlike reflected or stored XSS, DOM-based XSS happens entirely in the browser's DOM - the server
+                is not involved. The vulnerability exists in client-side code.
+            </p>
+        </div>
+
+        <div class="lab-section">
+            <h3 class="lab-title">🧪 Try It Yourself</h3>
+            
+            <p style="margin-bottom: 20px;">
+                This page reads content from the URL hash (<code>location.hash</code>) and displays it.
+                Modify the URL to inject malicious code.
+            </p>
+
+            <div class="form-group">
+                <label class="form-label">Current URL Hash:</label>
+                <input type="text" id="hashInput" class="form-input" placeholder="Edit the hash and press Enter...">
+            </div>
+
+            <button class="btn btn-primary" onclick="updateHash()">Update Hash</button>
+            <button class="btn btn-secondary" onclick="resetLab()">Reset</button>
+
+            <div class="output-area" id="output">
+                <div class="output-title">Output:</div>
+                <div id="display"></div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>💡 Try These Payloads</h4>
+            <p>Add these to the URL hash or use the input field above:</p>
+            <div class="code-block">
+                <code>#&lt;img src=x onerror=alert('DOM XSS')&gt;</code>
+            </div>
+            <div class="code-block">
+                <code>#&lt;script&gt;alert('DOM-based XSS!')&lt;/script&gt;</code>
+            </div>
+            <div class="code-block">
+                <code>#&lt;iframe src="javascript:alert('XSS')"&gt;&lt;/iframe&gt;</code>
+            </div>
+            <button class="btn btn-secondary" onclick="setExamplePayload()">
+                Try Example Payload
+            </button>
+        </div>
+
+        <div class="info-box">
+            <h4>🔍 Understanding the Vulnerability</h4>
+            <p><strong>Vulnerable Code:</strong></p>
+            <div class="code-block">
+                <code>
+// ❌ VULNERABLE: Reading from location.hash and using innerHTML<br>
+window.addEventListener('hashchange', function() {<br>
+&nbsp;&nbsp;const hash = location.hash.substring(1); // Remove # symbol<br>
+&nbsp;&nbsp;document.getElementById('display').innerHTML = hash;<br>
+});<br>
+                </code>
+            </div>
+            <p>
+                The problem: User-controlled data from <code>location.hash</code> is directly inserted into
+                the DOM using <code>innerHTML</code>, allowing HTML and JavaScript execution.
+            </p>
+            
+            <p style="margin-top: 20px;"><strong>Secure Code:</strong></p>
+            <div class="code-block">
+                <code>
+// ✅ SECURE: Using textContent instead<br>
+window.addEventListener('hashchange', function() {<br>
+&nbsp;&nbsp;const hash = location.hash.substring(1);<br>
+&nbsp;&nbsp;document.getElementById('display').textContent = hash;<br>
+});<br>
+<br>
+// ✅ SECURE: Or sanitize input<br>
+const sanitized = DOMPurify.sanitize(hash);<br>
+document.getElementById('display').innerHTML = sanitized;<br>
+                </code>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>🎯 Common Sources (User-Controllable)</h4>
+            <ul>
+                <li><code>location.hash</code> - URL fragment (after #)</li>
+                <li><code>location.search</code> - URL query parameters</li>
+                <li><code>document.referrer</code> - Referring page URL</li>
+                <li><code>window.name</code> - Window name property</li>
+                <li><code>localStorage</code> / <code>sessionStorage</code> - Browser storage</li>
+                <li><code>document.cookie</code> - HTTP cookies</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>💥 Dangerous Sinks</h4>
+            <ul>
+                <li><code>element.innerHTML</code> - Parses and executes HTML/JS</li>
+                <li><code>element.outerHTML</code> - Similar to innerHTML</li>
+                <li><code>document.write()</code> - Writes to document stream</li>
+                <li><code>eval()</code> - Executes JavaScript code</li>
+                <li><code>setTimeout() / setInterval()</code> - With string arguments</li>
+                <li><code>Function()</code> constructor - Creates functions from strings</li>
+                <li><code>element.setAttribute('onclick', ...)</code> - Event handlers</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>⚠️ Real-World Impact</h4>
+            <ul>
+                <li><strong>Account Hijacking:</strong> Steal tokens from URL fragments</li>
+                <li><strong>Phishing Attacks:</strong> Display fake login forms</li>
+                <li><strong>Data Exfiltration:</strong> Send sensitive data to attacker's server</li>
+                <li><strong>Malware Distribution:</strong> Redirect to malicious sites</li>
+                <li><strong>Client-side Template Injection:</strong> Exploit template engines</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>🔒 Prevention Techniques</h4>
+            <ul>
+                <li><strong>Avoid Dangerous Sinks:</strong> Never use innerHTML with user-controlled data</li>
+                <li><strong>Use Safe APIs:</strong> Prefer textContent, setAttribute(), createElement()</li>
+                <li><strong>Input Validation:</strong> Validate data from all sources</li>
+                <li><strong>Sanitization:</strong> Use DOMPurify or similar libraries</li>
+                <li><strong>Content Security Policy:</strong> Implement strict CSP</li>
+                <li><strong>URL Encoding:</strong> Properly encode URL parameters</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-disclaimer">
+            ⚠️ DISCLAIMER: This vulnerability is demonstrated in a controlled environment for educational purposes only.
+            Never exploit vulnerabilities on real systems without proper authorization.
+        </div>
+    </footer>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        // VULNERABLE FUNCTION - For educational demonstration only
+        function loadHashContent() {
+            const hash = location.hash.substring(1); // Remove # symbol
+            const display = document.getElementById('display');
+            const hashInput = document.getElementById('hashInput');
+            
+            // Update input field with current hash
+            hashInput.value = hash;
+
+            if (hash) {
+                // ❌ VULNERABLE: Using innerHTML with user-controlled data from URL
+                // This is intentionally vulnerable for educational purposes
+                display.innerHTML = '<div style="color: var(--accent-green); margin-top: 15px;">Content from hash: ' + hash + '</div>';
+                
+                // Educational note
+                const note = document.createElement('div');
+                note.className = 'message message-info';
+                note.style.marginTop = '15px';
+                note.textContent = '💡 Notice: The URL hash content was rendered as HTML! This demonstrates DOM-based XSS.';
+                display.appendChild(note);
+            } else {
+                display.innerHTML = '<div class="message message-info">No hash in URL. Try adding content after # in the URL.</div>';
+            }
+        }
+
+        function updateHash() {
+            const hashInput = document.getElementById('hashInput');
+            const newHash = hashInput.value;
+            location.hash = newHash;
+        }
+
+        function resetLab() {
+            location.hash = '';
+            document.getElementById('hashInput').value = '';
+            const display = document.getElementById('display');
+            display.innerHTML = '<div class="message message-info">Lab reset. Try adding a hash to the URL.</div>';
+        }
+
+        function setExamplePayload() {
+            const payload = '<img src=x onerror=alert("DOM XSS")>';
+            location.hash = payload;
+        }
+
+        // Listen for hash changes
+        window.addEventListener('hashchange', loadHashContent);
+
+        // Load content on page load
+        window.addEventListener('load', loadHashContent);
+
+        // Add Enter key support
+        document.getElementById('hashInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                updateHash();
+            }
+        });
+    </script>
+</body>
+</html>

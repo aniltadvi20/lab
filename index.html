@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Bounty Frontend Lab</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>🎯 Bug Bounty Frontend Lab</h1>
+        <h2>Learn Web Security Vulnerabilities Safely</h2>
+    </header>
+
+    <div class="container">
+        <div class="warning-banner">
+            ⚠️ FOR EDUCATIONAL PURPOSES ONLY - DO NOT USE ON REAL SYSTEMS
+        </div>
+
+        <div class="lab-description">
+            <h3>💡 Welcome to the Bug Bounty Frontend Lab</h3>
+            <p>
+                This is a hands-on learning platform designed to help you understand common web security vulnerabilities
+                in a safe, controlled environment. Each lab demonstrates a real vulnerability that exists in the wild.
+            </p>
+            <p>
+                <strong>Important:</strong> These labs run entirely in your browser with no backend. All vulnerabilities
+                are simulated for educational purposes. Always practice ethical hacking!
+            </p>
+        </div>
+
+        <section>
+            <h2 style="color: var(--accent-cyan); margin-bottom: 25px;">🔍 Available Labs</h2>
+            
+            <div class="cards-grid">
+                <!-- XSS Labs -->
+                <div class="card" onclick="window.location.href='labs/xss/reflected.html'">
+                    <div class="card-icon">🔴</div>
+                    <div class="card-title">Reflected XSS</div>
+                    <div class="card-description">
+                        Learn about Reflected Cross-Site Scripting vulnerabilities using innerHTML
+                    </div>
+                    <div class="card-difficulty difficulty-beginner">⭐ Beginner</div>
+                    <a href="labs/xss/reflected.html" class="card-link">Launch Lab →</a>
+                </div>
+
+                <div class="card" onclick="window.location.href='labs/xss/dom.html'">
+                    <div class="card-icon">🟠</div>
+                    <div class="card-title">DOM-based XSS</div>
+                    <div class="card-description">
+                        Explore DOM-based XSS vulnerabilities through URL hash manipulation
+                    </div>
+                    <div class="card-difficulty difficulty-intermediate">⭐⭐ Intermediate</div>
+                    <a href="labs/xss/dom.html" class="card-link">Launch Lab →</a>
+                </div>
+
+                <div class="card" onclick="window.location.href='labs/xss/stored.html'">
+                    <div class="card-icon">🔵</div>
+                    <div class="card-title">Stored XSS</div>
+                    <div class="card-description">
+                        Discover persistent XSS vulnerabilities using localStorage
+                    </div>
+                    <div class="card-difficulty difficulty-intermediate">⭐⭐ Intermediate</div>
+                    <a href="labs/xss/stored.html" class="card-link">Launch Lab →</a>
+                </div>
+
+                <!-- SQL Injection Simulator -->
+                <div class="card" onclick="window.location.href='labs/sqli/simulator.html'">
+                    <div class="card-icon">💾</div>
+                    <div class="card-title">SQL Injection Simulator</div>
+                    <div class="card-description">
+                        Practice SQL injection techniques in a simulated database environment
+                    </div>
+                    <div class="card-difficulty difficulty-beginner">⭐ Beginner</div>
+                    <a href="labs/sqli/simulator.html" class="card-link">Launch Lab →</a>
+                </div>
+
+                <!-- Account Takeover Lab -->
+                <div class="card" onclick="window.location.href='labs/account-takeover/ato.html'">
+                    <div class="card-icon">🔐</div>
+                    <div class="card-title">Account Takeover</div>
+                    <div class="card-description">
+                        Learn about logic flaws in authentication and session management
+                    </div>
+                    <div class="card-difficulty difficulty-advanced">⭐⭐⭐ Advanced</div>
+                    <a href="labs/account-takeover/ato.html" class="card-link">Launch Lab →</a>
+                </div>
+
+                <!-- Rate Limiting Lab -->
+                <div class="card" onclick="window.location.href='labs/rate-limiting/brute-force.html'">
+                    <div class="card-icon">⚡</div>
+                    <div class="card-title">Rate Limiting</div>
+                    <div class="card-description">
+                        Understand the importance of rate limiting and brute force protection
+                    </div>
+                    <div class="card-difficulty difficulty-beginner">⭐ Beginner</div>
+                    <a href="labs/rate-limiting/brute-force.html" class="card-link">Launch Lab →</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="info-box" style="margin-top: 40px;">
+            <h4>🎓 Learning Objectives</h4>
+            <p>By completing these labs, you will learn:</p>
+            <ul>
+                <li><strong>Identification:</strong> How to recognize security vulnerabilities in web applications</li>
+                <li><strong>Exploitation:</strong> How attackers exploit these vulnerabilities (in a safe environment)</li>
+                <li><strong>Impact:</strong> The potential damage these vulnerabilities can cause</li>
+                <li><strong>Prevention:</strong> Best practices and secure coding techniques to prevent these issues</li>
+                <li><strong>Remediation:</strong> How to fix existing vulnerabilities in production code</li>
+            </ul>
+        </section>
+
+        <section class="info-box">
+            <h4>🔒 Ethical Hacking Guidelines</h4>
+            <ul>
+                <li>These labs demonstrate real vulnerabilities for educational purposes</li>
+                <li><strong>NEVER</strong> test these techniques on websites you don't own</li>
+                <li>Always get written permission before performing security testing</li>
+                <li>Unauthorized testing is illegal and unethical</li>
+                <li>Use this knowledge to build more secure applications</li>
+                <li>Report vulnerabilities responsibly through proper channels</li>
+            </ul>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-disclaimer">
+            ⚠️ DISCLAIMER: This platform is for educational purposes only. All vulnerabilities are simulated
+            and contained within this environment. Misuse of this knowledge on real systems without authorization
+            is illegal.
+        </div>
+        <div class="footer-text">
+            © 2026 Bug Bounty Frontend Lab | Learn. Practice. Secure.
+        </div>
+    </footer>
+
+    <script src="js/common.js"></script>
+</body>
+</html>

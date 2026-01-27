@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflected XSS Lab - innerHTML Based</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>🔴 Reflected XSS Lab</h1>
+        <h2>innerHTML-Based Vulnerability</h2>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../../index.html">Home</a>
+            <span>></span>
+            <span>Reflected XSS</span>
+        </div>
+
+        <div class="warning-banner">
+            ⚠️ FOR EDUCATIONAL PURPOSES ONLY - DO NOT USE ON REAL SYSTEMS
+        </div>
+
+        <div class="lab-description">
+            <h3>📚 What is Reflected XSS?</h3>
+            <p>
+                <strong>Reflected Cross-Site Scripting (XSS)</strong> occurs when user input is immediately returned
+                by a web application without proper sanitization or encoding. The malicious script is "reflected"
+                off the web server in the response.
+            </p>
+            <p>
+                In this lab, we use <code>innerHTML</code> to display user input directly, which allows HTML and
+                JavaScript to be executed in the browser context.
+            </p>
+        </div>
+
+        <div class="lab-section">
+            <h3 class="lab-title">🧪 Try It Yourself</h3>
+            
+            <div class="form-group">
+                <label class="form-label" for="nameInput">Enter your name:</label>
+                <input type="text" id="nameInput" class="form-input" placeholder="Type your name here...">
+            </div>
+
+            <button class="btn btn-primary" onclick="displayName()">Submit</button>
+            <button class="btn btn-secondary" onclick="resetLab()">Reset</button>
+
+            <div class="output-area" id="output">
+                <div class="output-title">Output:</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>💡 Try These Payloads</h4>
+            <p>Copy and paste these into the input field to see the vulnerability in action:</p>
+            <div class="code-block">
+                <code>&lt;img src=x onerror=alert('XSS')&gt;</code>
+            </div>
+            <div class="code-block">
+                <code>&lt;script&gt;alert('Reflected XSS!')&lt;/script&gt;</code>
+            </div>
+            <div class="code-block">
+                <code>&lt;img src=x onerror="alert(document.cookie)"&gt;</code>
+            </div>
+            <button class="btn btn-secondary" onclick="copyToClipboard('<img src=x onerror=alert(\'XSS\')>')">
+                Copy First Payload
+            </button>
+        </div>
+
+        <div class="info-box">
+            <h4>🔍 Understanding the Vulnerability</h4>
+            <p><strong>Vulnerable Code:</strong></p>
+            <div class="code-block">
+                <code>
+// ❌ VULNERABLE: Using innerHTML with user input<br>
+const output = document.getElementById('output');<br>
+output.innerHTML = 'Welcome, ' + userInput + '!';<br>
+                </code>
+            </div>
+            <p>
+                The problem: <code>innerHTML</code> parses the string as HTML, so any HTML tags or JavaScript
+                in the user input will be executed.
+            </p>
+            
+            <p style="margin-top: 20px;"><strong>Secure Code:</strong></p>
+            <div class="code-block">
+                <code>
+// ✅ SECURE: Using textContent instead<br>
+const output = document.getElementById('output');<br>
+output.textContent = 'Welcome, ' + userInput + '!';<br>
+<br>
+// ✅ SECURE: Or create text node<br>
+const textNode = document.createTextNode(userInput);<br>
+output.appendChild(textNode);<br>
+<br>
+// ✅ SECURE: Or use DOMPurify library<br>
+const clean = DOMPurify.sanitize(userInput);<br>
+output.innerHTML = 'Welcome, ' + clean + '!';<br>
+                </code>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>⚠️ Real-World Impact</h4>
+            <ul>
+                <li><strong>Cookie Theft:</strong> Attackers can steal session cookies and hijack user accounts</li>
+                <li><strong>Phishing:</strong> Display fake login forms to steal credentials</li>
+                <li><strong>Malware Distribution:</strong> Redirect users to malicious websites</li>
+                <li><strong>Data Theft:</strong> Access sensitive information on the page</li>
+                <li><strong>Defacement:</strong> Modify page content to damage reputation</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>🔒 Prevention Techniques</h4>
+            <ul>
+                <li><strong>Use textContent:</strong> Always use <code>textContent</code> instead of <code>innerHTML</code> for user input</li>
+                <li><strong>Input Validation:</strong> Validate and sanitize all user inputs</li>
+                <li><strong>Output Encoding:</strong> Encode special characters (e.g., &lt;, &gt;, &amp;)</li>
+                <li><strong>Content Security Policy (CSP):</strong> Implement CSP headers to prevent inline scripts</li>
+                <li><strong>Use Libraries:</strong> Consider using DOMPurify or similar sanitization libraries</li>
+                <li><strong>HttpOnly Cookies:</strong> Set HttpOnly flag on cookies to prevent JavaScript access</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-disclaimer">
+            ⚠️ DISCLAIMER: This vulnerability is demonstrated in a controlled environment for educational purposes only.
+            Never exploit vulnerabilities on real systems without proper authorization.
+        </div>
+    </footer>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        // VULNERABLE FUNCTION - For educational demonstration only
+        function displayName() {
+            const nameInput = document.getElementById('nameInput');
+            const output = document.getElementById('output');
+            const name = nameInput.value;
+
+            if (!name) {
+                output.innerHTML = '<div class="output-title">Output:</div><div class="message message-error">Please enter a name!</div>';
+                return;
+            }
+
+            // ❌ VULNERABLE: Using innerHTML allows HTML/JavaScript execution
+            // This is intentionally vulnerable for educational purposes
+            output.innerHTML = '<div class="output-title">Output:</div><div style="color: var(--accent-green); margin-top: 15px; font-size: 1.2rem;">Welcome, ' + name + '!</div>';
+            
+            // Educational note
+            const note = document.createElement('div');
+            note.className = 'message message-info';
+            note.style.marginTop = '15px';
+            note.textContent = '💡 Notice: If you entered HTML/JavaScript, it was executed! This demonstrates the vulnerability.';
+            output.appendChild(note);
+        }
+
+        function resetLab() {
+            document.getElementById('nameInput').value = '';
+            const output = document.getElementById('output');
+            output.innerHTML = '<div class="output-title">Output:</div>';
+        }
+
+        // Add Enter key support
+        document.getElementById('nameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                displayName();
+            }
+        });
+
+        // Copy to clipboard function (from common.js)
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Payload copied to clipboard!');
+                }).catch(() => {
+                    alert('Failed to copy');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
