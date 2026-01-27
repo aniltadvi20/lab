@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflected XSS Lab - innerHTML Based</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <h1 class="lab-title">🔓 Reflected XSS Lab - innerHTML Based</h1>
+        
+        <div class="lab-description">
+            <h3>📚 What is Reflected XSS?</h3>
+            <p>
+                <strong>Reflected Cross-Site Scripting (XSS)</strong> occurs when user input is immediately 
+                returned by a web application without proper sanitization. The malicious script is "reflected" 
+                off the web server and executed in the victim's browser.
+            </p>
+            <p>
+                In this lab, we use <code>innerHTML</code> to display user input, which is vulnerable 
+                because it interprets HTML and JavaScript, not just text.
+            </p>
+        </div>
+
+        <div class="lab-section">
+            <h3>🎯 Your Challenge</h3>
+            <p>Try to inject JavaScript that will execute when the page displays your input.</p>
+            
+            <div class="form-group">
+                <label for="nameInput">Enter your name:</label>
+                <input type="text" id="nameInput" placeholder="e.g., John Doe">
+            </div>
+            
+            <button id="submitBtn" onclick="displayName()">Submit</button>
+            <button class="btn-secondary" onclick="resetLab()">Reset</button>
+            
+            <div class="output-box vulnerable" id="outputBox">
+                <em>Your greeting will appear here...</em>
+            </div>
+        </div>
+
+        <div class="learning-section">
+            <h3>💡 Example Payloads to Try</h3>
+            <p>Click any payload below to copy it to your clipboard:</p>
+            
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+                <p><strong>1. Basic Alert:</strong></p>
+                <code class="payload-example" style="cursor: pointer; display: block; padding: 0.5rem;" 
+                      onclick="copyToClipboard(this.textContent); document.getElementById('nameInput').value = this.textContent;">
+                    &lt;img src=x onerror=alert('XSS')&gt;
+                </code>
+                
+                <p style="margin-top: 1rem;"><strong>2. Script Tag:</strong></p>
+                <code class="payload-example" style="cursor: pointer; display: block; padding: 0.5rem;" 
+                      onclick="copyToClipboard(this.textContent); document.getElementById('nameInput').value = this.textContent;">
+                    &lt;script&gt;alert('Reflected XSS')&lt;/script&gt;
+                </code>
+                
+                <p style="margin-top: 1rem;"><strong>3. Event Handler:</strong></p>
+                <code class="payload-example" style="cursor: pointer; display: block; padding: 0.5rem;" 
+                      onclick="copyToClipboard(this.textContent); document.getElementById('nameInput').value = this.textContent;">
+                    &lt;img src=x onerror=console.log('XSS Executed')&gt;
+                </code>
+                
+                <p style="margin-top: 1rem;"><strong>4. Style-based XSS:</strong></p>
+                <code class="payload-example" style="cursor: pointer; display: block; padding: 0.5rem;" 
+                      onclick="copyToClipboard(this.textContent); document.getElementById('nameInput').value = this.textContent;">
+                    &lt;style&gt;body{background:red}&lt;/style&gt;
+                </code>
+            </div>
+        </div>
+
+        <div class="info-box danger">
+            <h3>⚠️ Why This is Dangerous</h3>
+            <ul style="padding-left: 2rem;">
+                <li><strong>Cookie Theft:</strong> Attackers can steal session cookies with <code>document.cookie</code></li>
+                <li><strong>Credential Harvesting:</strong> Create fake login forms to capture passwords</li>
+                <li><strong>Malware Distribution:</strong> Redirect users to malicious websites</li>
+                <li><strong>Keylogging:</strong> Capture every keystroke on the page</li>
+                <li><strong>Defacement:</strong> Modify page content to spread misinformation</li>
+            </ul>
+        </div>
+
+        <div class="learning-section">
+            <h3>🔒 How to Fix This Vulnerability</h3>
+            
+            <p><strong>❌ Vulnerable Code:</strong></p>
+            <pre><code>// BAD - Using innerHTML with user input
+const name = document.getElementById('nameInput').value;
+outputBox.innerHTML = 'Welcome, ' + name + '!';</code></pre>
+            
+            <p style="margin-top: 1.5rem;"><strong>✅ Safe Alternative 1 - Use textContent:</strong></p>
+            <pre><code>// GOOD - Using textContent (no HTML interpretation)
+const name = document.getElementById('nameInput').value;
+outputBox.textContent = 'Welcome, ' + name + '!';</code></pre>
+            
+            <p style="margin-top: 1.5rem;"><strong>✅ Safe Alternative 2 - Escape HTML:</strong></p>
+            <pre><code>// GOOD - Escaping HTML special characters
+function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+const name = escapeHTML(document.getElementById('nameInput').value);
+outputBox.innerHTML = 'Welcome, ' + name + '!';</code></pre>
+            
+            <p style="margin-top: 1.5rem;"><strong>✅ Safe Alternative 3 - Use DOMPurify (recommended):</strong></p>
+            <pre><code>// BEST - Using DOMPurify library to sanitize HTML
+// Include: &lt;script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"&gt;&lt;/script&gt;
+const name = DOMPurify.sanitize(document.getElementById('nameInput').value);
+outputBox.innerHTML = 'Welcome, ' + name + '!';</code></pre>
+        </div>
+
+        <div class="info-box success">
+            <h3>✅ Key Takeaways</h3>
+            <ul style="padding-left: 2rem;">
+                <li>Never trust user input - always sanitize or escape it</li>
+                <li>Use <code>textContent</code> instead of <code>innerHTML</code> when possible</li>
+                <li>Implement Content Security Policy (CSP) headers</li>
+                <li>Use established sanitization libraries like DOMPurify</li>
+                <li>Validate input on both client and server side</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        // Initialize page
+        createHeader('Bug Bounty Frontend Lab', true, ['XSS Labs', 'Reflected XSS']);
+        addEnterKeyListener('submitBtn');
+
+        // VULNERABLE FUNCTION - Uses innerHTML (DO NOT USE IN PRODUCTION)
+        function displayName() {
+            const nameInput = document.getElementById('nameInput');
+            const outputBox = document.getElementById('outputBox');
+            const name = nameInput.value;
+            
+            if (!name.trim()) {
+                showStatus('Please enter a name!', 'warning', 3000);
+                return;
+            }
+            
+            // ⚠️ VULNERABILITY: Using innerHTML with user input
+            // This allows HTML/JavaScript injection
+            outputBox.innerHTML = `<h2>Welcome, ${name}!</h2>`;
+            
+            // Log to console for educational purposes
+            console.log('%c⚠️ VULNERABILITY EXECUTED', 'color: #ff3860; font-size: 16px; font-weight: bold;');
+            console.log('Input was directly inserted using innerHTML without sanitization');
+            console.log('User input:', name);
+        }
+
+        // Safe version for comparison (commented out)
+        function displayNameSafe() {
+            const nameInput = document.getElementById('nameInput');
+            const outputBox = document.getElementById('outputBox');
+            const name = nameInput.value;
+            
+            if (!name.trim()) {
+                showStatus('Please enter a name!', 'warning', 3000);
+                return;
+            }
+            
+            // ✅ SAFE: Using textContent instead of innerHTML
+            outputBox.textContent = `Welcome, ${name}!`;
+            
+            console.log('✅ Safe version - Used textContent');
+        }
+
+        function resetLab() {
+            document.getElementById('nameInput').value = '';
+            document.getElementById('outputBox').innerHTML = '<em>Your greeting will appear here...</em>';
+            showStatus('Lab reset!', 'info', 2000);
+        }
+
+        // Console educational message
+        console.log('%c🔓 Reflected XSS Lab', 'color: #00ff41; font-size: 18px; font-weight: bold;');
+        console.log('%cThis lab demonstrates innerHTML-based XSS vulnerability', 'color: #00d9ff; font-size: 12px;');
+        console.log('%cTry payloads like: <img src=x onerror=alert("XSS")>', 'color: #888888; font-size: 11px;');
+    </script>
+</body>
+</html>

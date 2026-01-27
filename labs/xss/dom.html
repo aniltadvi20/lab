@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM-based XSS Lab - location.hash</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <h1 class="lab-title">🌐 DOM-based XSS Lab - location.hash</h1>
+        
+        <div class="lab-description">
+            <h3>📚 What is DOM-based XSS?</h3>
+            <p>
+                <strong>DOM-based XSS</strong> occurs when client-side JavaScript code processes untrusted 
+                data from sources like <code>location.hash</code>, <code>location.search</code>, or 
+                <code>document.referrer</code> and writes it to dangerous sinks like <code>innerHTML</code> 
+                without proper validation.
+            </p>
+            <p>
+                Unlike reflected or stored XSS, DOM-based XSS happens entirely in the browser. 
+                The malicious payload never reaches the server, making it harder to detect with 
+                traditional server-side security controls.
+            </p>
+        </div>
+
+        <div class="lab-section">
+            <h3>🎯 Your Challenge</h3>
+            <p>
+                This page reads content from the URL hash (the part after #) and displays it.
+                Try adding a malicious payload to the URL hash to execute JavaScript.
+            </p>
+            
+            <div class="info-box">
+                <strong>💡 How to Test:</strong>
+                <ol style="padding-left: 2rem; margin-top: 0.5rem;">
+                    <li>Click one of the example URLs below</li>
+                    <li>Or manually edit the URL in your browser's address bar</li>
+                    <li>The content after the # symbol will be displayed on the page</li>
+                </ol>
+            </div>
+
+            <div class="output-box vulnerable" id="displayBox">
+                <em>Content from URL hash will appear here...</em>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+                <button class="btn-secondary" onclick="resetLab()">Reset</button>
+                <button onclick="showCurrentURL()">Show Current URL</button>
+            </div>
+            
+            <div id="urlDisplay" class="output-box" style="margin-top: 1rem; display: none;">
+                <strong>Current URL:</strong>
+                <code id="currentURL" style="word-break: break-all;"></code>
+            </div>
+        </div>
+
+        <div class="learning-section">
+            <h3>💡 Example Payloads to Try</h3>
+            <p>Click any link below to test the vulnerability:</p>
+            
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+                <p><strong>1. Basic Alert:</strong></p>
+                <a href="#<img src=x onerror=alert('DOM XSS')>" 
+                   style="color: var(--accent-cyan); display: block; padding: 0.5rem; background: var(--bg-secondary); border-radius: 4px; text-decoration: none; margin: 0.5rem 0;">
+                    #&lt;img src=x onerror=alert('DOM XSS')&gt;
+                </a>
+                
+                <p style="margin-top: 1rem;"><strong>2. Script Tag:</strong></p>
+                <a href="#<script>alert('DOM-based XSS Attack')</script>" 
+                   style="color: var(--accent-cyan); display: block; padding: 0.5rem; background: var(--bg-secondary); border-radius: 4px; text-decoration: none; margin: 0.5rem 0;">
+                    #&lt;script&gt;alert('DOM-based XSS Attack')&lt;/script&gt;
+                </a>
+                
+                <p style="margin-top: 1rem;"><strong>3. Console Log:</strong></p>
+                <a href="#<img src=x onerror=console.log('Hash-based XSS executed!')>" 
+                   style="color: var(--accent-cyan); display: block; padding: 0.5rem; background: var(--bg-secondary); border-radius: 4px; text-decoration: none; margin: 0.5rem 0;">
+                    #&lt;img src=x onerror=console.log('Hash-based XSS executed!')&gt;
+                </a>
+                
+                <p style="margin-top: 1rem;"><strong>4. DOM Manipulation:</strong></p>
+                <a href="#<h1 style='color:red'>Page Hijacked!</h1>" 
+                   style="color: var(--accent-cyan); display: block; padding: 0.5rem; background: var(--bg-secondary); border-radius: 4px; text-decoration: none; margin: 0.5rem 0;">
+                    #&lt;h1 style='color:red'&gt;Page Hijacked!&lt;/h1&gt;
+                </a>
+                
+                <p style="margin-top: 1rem;"><strong>5. Safe Example (plain text):</strong></p>
+                <a href="#Hello World" 
+                   style="color: var(--accent-green); display: block; padding: 0.5rem; background: var(--bg-secondary); border-radius: 4px; text-decoration: none; margin: 0.5rem 0;">
+                    #Hello World
+                </a>
+            </div>
+        </div>
+
+        <div class="info-box danger">
+            <h3>⚠️ Why This is Dangerous</h3>
+            <ul style="padding-left: 2rem;">
+                <li><strong>Bypasses Server Filters:</strong> Hash fragments never reach the server, so server-side XSS filters won't catch them</li>
+                <li><strong>Phishing Attacks:</strong> Malicious links can be shared with victims</li>
+                <li><strong>Session Hijacking:</strong> Access to cookies and localStorage</li>
+                <li><strong>Hard to Detect:</strong> Many security tools miss client-side vulnerabilities</li>
+                <li><strong>No Server Logs:</strong> Attacks don't appear in server access logs</li>
+            </ul>
+        </div>
+
+        <div class="learning-section">
+            <h3>🔒 How to Fix This Vulnerability</h3>
+            
+            <p><strong>❌ Vulnerable Code:</strong></p>
+            <pre><code>// BAD - Reading from location.hash and using innerHTML
+const content = location.hash.substring(1); // Remove # symbol
+document.getElementById('displayBox').innerHTML = content;</code></pre>
+            
+            <p style="margin-top: 1.5rem;"><strong>✅ Safe Alternative 1 - Use textContent:</strong></p>
+            <pre><code>// GOOD - Using textContent (no HTML interpretation)
+const content = location.hash.substring(1);
+document.getElementById('displayBox').textContent = content;</code></pre>
+            
+            <p style="margin-top: 1.5rem;"><strong>✅ Safe Alternative 2 - Sanitize Input:</strong></p>
+            <pre><code>// GOOD - Sanitize before using innerHTML
+const content = location.hash.substring(1);
+const sanitized = DOMPurify.sanitize(content);
+document.getElementById('displayBox').innerHTML = sanitized;</code></pre>
+            
+            <p style="margin-top: 1.5rem;"><strong>✅ Safe Alternative 3 - Validate and Parse:</strong></p>
+            <pre><code>// BEST - Only accept expected formats
+const content = location.hash.substring(1);
+// Only allow alphanumeric and spaces
+if (/^[a-zA-Z0-9\s]+$/.test(content)) {
+    document.getElementById('displayBox').textContent = content;
+} else {
+    document.getElementById('displayBox').textContent = 'Invalid input';
+}</code></pre>
+        </div>
+
+        <div class="info-box success">
+            <h3>✅ Key Takeaways</h3>
+            <ul style="padding-left: 2rem;">
+                <li>Treat all DOM sources (location.hash, location.search, etc.) as untrusted input</li>
+                <li>Never use innerHTML with untrusted data</li>
+                <li>Use textContent, or sanitize with DOMPurify before using innerHTML</li>
+                <li>Implement strict input validation and allowlisting</li>
+                <li>Use Content Security Policy (CSP) to mitigate XSS impact</li>
+                <li>Be aware of other dangerous sinks: eval(), setTimeout(), setInterval() with strings</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        // Initialize page
+        createHeader('Bug Bounty Frontend Lab', true, ['XSS Labs', 'DOM-based XSS']);
+
+        // VULNERABLE FUNCTION - Reads from location.hash and uses innerHTML
+        function loadHashContent() {
+            const displayBox = document.getElementById('displayBox');
+            const hash = location.hash.substring(1); // Remove # symbol
+            
+            if (hash) {
+                // ⚠️ VULNERABILITY: Using innerHTML with location.hash
+                // This allows HTML/JavaScript injection from the URL
+                displayBox.innerHTML = decodeURIComponent(hash);
+                
+                // Log to console for educational purposes
+                console.log('%c⚠️ DOM-BASED XSS VULNERABILITY', 'color: #ff3860; font-size: 16px; font-weight: bold;');
+                console.log('Hash content was directly inserted using innerHTML');
+                console.log('Hash value:', hash);
+            } else {
+                displayBox.innerHTML = '<em>Add content to URL hash (e.g., #Hello World)</em>';
+            }
+        }
+
+        // Safe version for comparison (commented out)
+        function loadHashContentSafe() {
+            const displayBox = document.getElementById('displayBox');
+            const hash = location.hash.substring(1);
+            
+            if (hash) {
+                // ✅ SAFE: Using textContent instead of innerHTML
+                displayBox.textContent = decodeURIComponent(hash);
+                console.log('✅ Safe version - Used textContent');
+            }
+        }
+
+        function resetLab() {
+            location.hash = '';
+            document.getElementById('displayBox').innerHTML = '<em>Content from URL hash will appear here...</em>';
+            document.getElementById('urlDisplay').style.display = 'none';
+            showStatus('Lab reset!', 'info', 2000);
+        }
+
+        function showCurrentURL() {
+            const urlDisplay = document.getElementById('urlDisplay');
+            const currentURL = document.getElementById('currentURL');
+            
+            currentURL.textContent = window.location.href;
+            urlDisplay.style.display = 'block';
+        }
+
+        // Load content when page loads and when hash changes
+        window.addEventListener('load', loadHashContent);
+        window.addEventListener('hashchange', loadHashContent);
+
+        // Console educational message
+        console.log('%c🌐 DOM-based XSS Lab', 'color: #00ff41; font-size: 18px; font-weight: bold;');
+        console.log('%cThis lab demonstrates location.hash-based XSS vulnerability', 'color: #00d9ff; font-size: 12px;');
+        console.log('%cTry adding to URL: #<img src=x onerror=alert("XSS")>', 'color: #888888; font-size: 11px;');
+    </script>
+</body>
+</html>
