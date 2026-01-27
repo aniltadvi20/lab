@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bug Bounty Frontend Lab - Learn Web Security Vulnerabilities Safely">
+    <title>Bug Bounty Frontend Lab - Educational Security Testing Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="home-page">
+    <header>
+        <h1>🎯 Bug Bounty Frontend Lab</h1>
+        <p class="subtitle">Learn Web Security Vulnerabilities Safely</p>
+    </header>
+
+    <div class="container">
+        <div class="warning-banner">
+            ⚠️ FOR EDUCATIONAL PURPOSES ONLY - DO NOT USE ON REAL SYSTEMS ⚠️
+        </div>
+
+        <div class="lab-section">
+            <h2>Welcome to the Bug Bounty Frontend Lab</h2>
+            <p>This platform provides hands-on experience with common web vulnerabilities in a safe, controlled environment. Each lab demonstrates real security issues and teaches you how to identify and prevent them.</p>
+            
+            <div class="info-box warning">
+                <h4>🔒 Important Disclaimer</h4>
+                <p><strong>These labs demonstrate real vulnerabilities. NEVER test these techniques on websites you don't own.</strong></p>
+                <p>Unauthorized security testing is illegal and unethical. This platform is for educational purposes only.</p>
+            </div>
+
+            <div class="info-box">
+                <h4>💡 Learning Objectives</h4>
+                <ul>
+                    <li>Understand common web vulnerabilities and how they work</li>
+                    <li>Learn to identify security flaws in web applications</li>
+                    <li>Discover how to exploit vulnerabilities responsibly</li>
+                    <li>Master the techniques to fix and prevent these issues</li>
+                    <li>Prepare for bug bounty programs and security assessments</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 style="color: var(--accent-green); margin: 30px 0 20px 0; text-align: center;">Choose Your Lab</h2>
+
+        <div class="lab-grid">
+            <!-- XSS Labs Card -->
+            <div class="lab-card">
+                <div class="icon">🎭</div>
+                <h3>XSS Labs</h3>
+                <span class="difficulty beginner">Beginner</span>
+                <p>Cross-Site Scripting (XSS) vulnerabilities allow attackers to inject malicious scripts into web pages. Learn three types of XSS attacks.</p>
+                <h4 style="color: var(--accent-cyan); margin-top: 15px;">Includes:</h4>
+                <ul style="margin: 10px 0;">
+                    <li>Reflected XSS (innerHTML-based)</li>
+                    <li>DOM-based XSS (location.hash)</li>
+                    <li>Stored XSS (localStorage)</li>
+                </ul>
+                <a href="labs/xss/reflected.html" class="btn">Start XSS Labs →</a>
+            </div>
+
+            <!-- SQL Injection Card -->
+            <div class="lab-card">
+                <div class="icon">💉</div>
+                <h3>SQL Injection Simulator</h3>
+                <span class="difficulty intermediate">Intermediate</span>
+                <p>SQL Injection allows attackers to manipulate database queries. Learn how to identify and exploit SQL injection vulnerabilities.</p>
+                <h4 style="color: var(--accent-cyan); margin-top: 15px;">You'll Learn:</h4>
+                <ul style="margin: 10px 0;">
+                    <li>SQL injection basics</li>
+                    <li>Authentication bypass techniques</li>
+                    <li>Query manipulation patterns</li>
+                </ul>
+                <a href="labs/sqli/simulator.html" class="btn">Launch SQL Lab →</a>
+            </div>
+
+            <!-- Account Takeover Card -->
+            <div class="lab-card">
+                <div class="icon">🔓</div>
+                <h3>Account Takeover Lab</h3>
+                <span class="difficulty intermediate">Intermediate</span>
+                <p>Account takeover vulnerabilities allow unauthorized access to user accounts. Explore common logic flaws and authentication issues.</p>
+                <h4 style="color: var(--accent-cyan); margin-top: 15px;">Topics Covered:</h4>
+                <ul style="margin: 10px 0;">
+                    <li>Weak password reset flows</li>
+                    <li>Broken OTP verification</li>
+                    <li>Session fixation attacks</li>
+                </ul>
+                <a href="labs/account-takeover/ato.html" class="btn">Access ATO Lab →</a>
+            </div>
+
+            <!-- Rate Limiting Card -->
+            <div class="lab-card">
+                <div class="icon">🚦</div>
+                <h3>Rate Limiting Lab</h3>
+                <span class="difficulty beginner">Beginner</span>
+                <p>Rate limiting prevents brute force attacks. Understand why it's critical and how attackers exploit its absence.</p>
+                <h4 style="color: var(--accent-cyan); margin-top: 15px;">Demonstrations:</h4>
+                <ul style="margin: 10px 0;">
+                    <li>Brute force PIN attacks</li>
+                    <li>Rate limiting implementation</li>
+                    <li>Cooldown mechanisms</li>
+                </ul>
+                <a href="labs/rate-limiting/brute-force.html" class="btn">Try Rate Limit Lab →</a>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>🎓 Best Practices for Learning</h2>
+            <div class="info-box success">
+                <h4>✅ Do</h4>
+                <ul>
+                    <li>Experiment freely with these labs</li>
+                    <li>Try different payloads and techniques</li>
+                    <li>Read the code to understand vulnerabilities</li>
+                    <li>Learn both exploitation and prevention</li>
+                    <li>Practice ethical hacking principles</li>
+                </ul>
+            </div>
+
+            <div class="info-box warning">
+                <h4>❌ Don't</h4>
+                <ul>
+                    <li>Use these techniques on real websites without permission</li>
+                    <li>Share exploits for malicious purposes</li>
+                    <li>Skip understanding the "why" behind vulnerabilities</li>
+                    <li>Ignore the legal and ethical implications</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>📚 Resources</h2>
+            <p>Want to learn more about web security and bug bounties?</p>
+            <ul>
+                <li><strong>OWASP Top 10:</strong> Understanding the most critical web application security risks</li>
+                <li><strong>Bug Bounty Platforms:</strong> HackerOne, Bugcrowd, Synack</li>
+                <li><strong>Web Security Testing:</strong> Burp Suite, OWASP ZAP, browser DevTools</li>
+                <li><strong>Security Blogs:</strong> PortSwigger Web Security Academy, OWASP resources</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>Bug Bounty Frontend Lab</strong></p>
+        <p>Educational Security Testing Platform</p>
+        <p style="margin-top: 20px; font-size: 0.9rem;">
+            <strong>⚠️ DISCLAIMER:</strong> This platform is for educational purposes only. 
+            All labs run entirely in your browser with no backend. 
+            Never attempt to exploit real websites without explicit permission.
+        </p>
+        <p style="margin-top: 10px; font-size: 0.85rem; color: #888;">
+            By using this platform, you agree to use it responsibly and ethically.
+        </p>
+    </footer>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Add fade-in animation to cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.lab-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.classList.add('fade-in');
+                    card.style.opacity = '1';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

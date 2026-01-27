@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflected XSS Lab - innerHTML Based | Bug Bounty Lab</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>🎭 Reflected XSS Lab</h1>
+        <p class="subtitle">innerHTML-Based Cross-Site Scripting</p>
+    </header>
+
+    <div class="lab-container">
+        <div class="lab-section">
+            <h2>What is Reflected XSS?</h2>
+            <p>Reflected XSS occurs when user input is immediately displayed back to the user without proper sanitization. The malicious script is "reflected" off the web server and executed in the victim's browser.</p>
+            
+            <div class="info-box warning">
+                <h4>⚠️ Vulnerability: innerHTML</h4>
+                <p>This lab uses <code>innerHTML</code> to display user input, which parses HTML and executes embedded JavaScript. This is a common and dangerous vulnerability.</p>
+            </div>
+
+            <h3>🎯 Your Challenge</h3>
+            <p>Try to inject JavaScript code that will execute when displayed. Here are some payloads to try:</p>
+            
+            <div class="code-block vulnerable">
+                <code>&lt;img src=x onerror=alert('XSS')&gt;</code>
+            </div>
+            <div class="code-block vulnerable">
+                <code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code>
+            </div>
+            <div class="code-block vulnerable">
+                <code>&lt;svg onload=alert('XSS')&gt;</code>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>🧪 Try It Yourself</h2>
+            
+            <div class="form-group">
+                <label for="nameInput">Enter your name:</label>
+                <input type="text" id="nameInput" placeholder="Enter your name here...">
+            </div>
+
+            <button onclick="submitName()">Submit</button>
+            <button class="reset-btn" onclick="resetLab()">Reset</button>
+
+            <div id="output" class="output-area">
+                <p style="color: #888;">Your greeting will appear here...</p>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>🔍 How It Works</h2>
+            <p>When you submit your input, the application takes your input and displays it using this <strong>vulnerable code</strong>:</p>
+            
+            <div class="code-block vulnerable">
+                <code>
+// ❌ VULNERABLE CODE (Don't use this!)<br>
+document.getElementById('output').innerHTML = 'Welcome, ' + userInput + '!';<br>
+<br>
+// This directly inserts user input as HTML<br>
+// If userInput contains HTML tags, they will be parsed and executed!
+                </code>
+            </div>
+
+            <h3>🔒 The Safe Way</h3>
+            <p>To prevent XSS, use <code>textContent</code> or <code>innerText</code> instead, which treats all input as plain text:</p>
+            
+            <div class="code-block safe">
+                <code>
+// ✅ SAFE CODE (Use this instead!)<br>
+document.getElementById('output').textContent = 'Welcome, ' + userInput + '!';<br>
+<br>
+// This treats everything as text, no HTML parsing<br>
+// Even if userInput contains tags, they won't execute
+                </code>
+            </div>
+
+            <h3>💡 Other Prevention Methods</h3>
+            <div class="info-box">
+                <ul>
+                    <li><strong>Content Security Policy (CSP):</strong> Restrict which scripts can execute</li>
+                    <li><strong>Input Validation:</strong> Reject or sanitize dangerous characters</li>
+                    <li><strong>HTML Encoding:</strong> Convert special characters (&lt;, &gt;, &amp;, etc.)</li>
+                    <li><strong>DOMPurify:</strong> Use a sanitization library for complex cases</li>
+                    <li><strong>Template Engines:</strong> Use frameworks that auto-escape by default</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>📖 Real-World Impact</h2>
+            <div class="info-box warning">
+                <h4>What Can Attackers Do?</h4>
+                <ul>
+                    <li><strong>Cookie Theft:</strong> Steal session cookies and hijack accounts</li>
+                    <li><strong>Phishing:</strong> Display fake login forms to steal credentials</li>
+                    <li><strong>Malware Distribution:</strong> Redirect users to malicious sites</li>
+                    <li><strong>Keylogging:</strong> Capture everything the user types</li>
+                    <li><strong>Defacement:</strong> Modify page content to spread misinformation</li>
+                </ul>
+            </div>
+
+            <div class="info-box success">
+                <h4>✅ Key Takeaways</h4>
+                <ul>
+                    <li>Never use <code>innerHTML</code> with untrusted user input</li>
+                    <li>Always sanitize or encode user input before displaying it</li>
+                    <li>Use <code>textContent</code> when you don't need HTML rendering</li>
+                    <li>Implement CSP headers to add an extra layer of defense</li>
+                    <li>Test your applications for XSS vulnerabilities regularly</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>🚀 Next Steps</h2>
+            <p>Ready to explore more XSS vulnerabilities?</p>
+            <a href="dom.html" class="btn">Try DOM-based XSS →</a>
+            <a href="stored.html" class="btn secondary">Try Stored XSS →</a>
+            <a href="../../index.html" class="btn reset-btn">← Back to Home</a>
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>⚠️ Educational Purpose Only</strong></p>
+        <p>Never test XSS on real websites without permission</p>
+    </footer>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        // Add breadcrumb navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            createBreadcrumb([
+                { text: 'Home', url: '../../index.html' },
+                { text: 'XSS Labs', url: '#' },
+                { text: 'Reflected XSS', url: '#' }
+            ]);
+        });
+
+        // ❌ VULNERABLE FUNCTION - Demonstrates innerHTML XSS
+        function submitName() {
+            const input = document.getElementById('nameInput');
+            const output = document.getElementById('output');
+            const userInput = input.value.trim();
+
+            if (!userInput) {
+                output.innerHTML = '<p style="color: var(--warning-red);">Please enter your name!</p>';
+                return;
+            }
+
+            // THIS IS THE VULNERABILITY!
+            // Using innerHTML with user input allows XSS attacks
+            // Any HTML/JavaScript in userInput will be executed
+            output.innerHTML = '<p style="color: var(--accent-green); font-size: 1.2rem;">Welcome, ' + userInput + '! 🎉</p>';
+            
+            // ✅ SAFE ALTERNATIVE (commented out):
+            // output.textContent = 'Welcome, ' + userInput + '! 🎉';
+            // This would prevent XSS by treating input as plain text
+        }
+
+        function resetLab() {
+            document.getElementById('nameInput').value = '';
+            document.getElementById('output').innerHTML = '<p style="color: #888;">Your greeting will appear here...</p>';
+            showNotification('Lab reset!', 'info');
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('nameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitName();
+            }
+        });
+    </script>
+</body>
+</html>
