@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Bounty Frontend Lab - Learn Web Security</title>
+    <meta name="description" content="Educational platform for learning web security vulnerabilities in a safe environment">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="text-center mb-2">
+            <h1>🎯 Bug Bounty Frontend Lab</h1>
+            <h2 style="color: var(--accent-cyan);">Learn Web Security Vulnerabilities Safely</h2>
+            <p style="font-size: 1.1rem; color: var(--text-secondary);">
+                Master bug bounty techniques through interactive, browser-based labs
+            </p>
+        </div>
+
+        <div class="warning-banner">
+            <span class="emoji">⚠️</span>
+            <strong>FOR EDUCATIONAL PURPOSES ONLY - DO NOT USE ON REAL SYSTEMS</strong>
+            <span class="emoji">⚠️</span>
+        </div>
+
+        <div class="lab-description text-center mb-2">
+            <h3>🎓 Welcome to Your Security Learning Journey</h3>
+            <p>
+                This platform provides hands-on experience with common web vulnerabilities.
+                Each lab is designed to teach you how attacks work and how to prevent them.
+                All labs run entirely in your browser - no backend required!
+            </p>
+        </div>
+
+        <h2 style="margin-top: 3rem; margin-bottom: 1.5rem;">🔬 Available Labs</h2>
+
+        <!-- XSS Labs Section -->
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">🔓</div>
+                <h3 class="card-title">Reflected XSS</h3>
+                <span class="difficulty-badge difficulty-beginner">Beginner</span>
+                <p class="card-description">
+                    Learn how reflected Cross-Site Scripting (XSS) vulnerabilities work through innerHTML injection.
+                    Practice identifying and exploiting this common web security flaw.
+                </p>
+                <div class="info-box">
+                    <strong>📚 You'll Learn:</strong>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                        <li>How reflected XSS attacks work</li>
+                        <li>The dangers of innerHTML</li>
+                        <li>Safe alternatives for DOM manipulation</li>
+                    </ul>
+                </div>
+                <a href="labs/xss/reflected.html" class="card-link">Start Lab →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🌐</div>
+                <h3 class="card-title">DOM-based XSS</h3>
+                <span class="difficulty-badge difficulty-intermediate">Intermediate</span>
+                <p class="card-description">
+                    Explore DOM-based XSS vulnerabilities that occur entirely in the browser using location.hash manipulation.
+                </p>
+                <div class="info-box">
+                    <strong>📚 You'll Learn:</strong>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                        <li>Client-side JavaScript vulnerabilities</li>
+                        <li>URL fragment manipulation</li>
+                        <li>DOM security best practices</li>
+                    </ul>
+                </div>
+                <a href="labs/xss/dom.html" class="card-link">Start Lab →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">💾</div>
+                <h3 class="card-title">Stored XSS</h3>
+                <span class="difficulty-badge difficulty-intermediate">Intermediate</span>
+                <p class="card-description">
+                    Understand persistent XSS attacks using localStorage to simulate stored malicious scripts.
+                </p>
+                <div class="info-box">
+                    <strong>📚 You'll Learn:</strong>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                        <li>Persistent XSS vulnerabilities</li>
+                        <li>localStorage security implications</li>
+                        <li>Input sanitization techniques</li>
+                    </ul>
+                </div>
+                <a href="labs/xss/stored.html" class="card-link">Start Lab →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">💉</div>
+                <h3 class="card-title">SQL Injection Simulator</h3>
+                <span class="difficulty-badge difficulty-beginner">Beginner</span>
+                <p class="card-description">
+                    Practice SQL injection techniques in a safe, simulated environment. See how attackers bypass authentication.
+                </p>
+                <div class="info-box">
+                    <strong>📚 You'll Learn:</strong>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                        <li>SQL injection fundamentals</li>
+                        <li>Authentication bypass techniques</li>
+                        <li>Parameterized query solutions</li>
+                    </ul>
+                </div>
+                <a href="labs/sqli/simulator.html" class="card-link">Start Lab →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🔑</div>
+                <h3 class="card-title">Account Takeover Lab</h3>
+                <span class="difficulty-badge difficulty-advanced">Advanced</span>
+                <p class="card-description">
+                    Discover common logic flaws in authentication systems including weak password resets, broken OTP, and session fixation.
+                </p>
+                <div class="info-box">
+                    <strong>📚 You'll Learn:</strong>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                        <li>Password reset vulnerabilities</li>
+                        <li>OTP bypass techniques</li>
+                        <li>Session management flaws</li>
+                    </ul>
+                </div>
+                <a href="labs/account-takeover/ato.html" class="card-link">Start Lab →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🛡️</div>
+                <h3 class="card-title">Rate Limiting Lab</h3>
+                <span class="difficulty-badge difficulty-beginner">Beginner</span>
+                <p class="card-description">
+                    Learn why rate limiting is crucial by attempting brute force attacks with and without protection.
+                </p>
+                <div class="info-box">
+                    <strong>📚 You'll Learn:</strong>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                        <li>Brute force attack methods</li>
+                        <li>Rate limiting implementation</li>
+                        <li>Account protection strategies</li>
+                    </ul>
+                </div>
+                <a href="labs/rate-limiting/brute-force.html" class="card-link">Start Lab →</a>
+            </div>
+        </div>
+
+        <!-- Learning Resources Section -->
+        <div class="learning-section mt-2">
+            <h3>📖 How to Use This Lab</h3>
+            <ol style="padding-left: 2rem;">
+                <li><strong>Choose a Lab:</strong> Start with beginner-level labs if you're new to security testing</li>
+                <li><strong>Read the Instructions:</strong> Each lab explains the vulnerability and provides guidance</li>
+                <li><strong>Try Different Payloads:</strong> Experiment with various attack vectors</li>
+                <li><strong>Learn the Fix:</strong> Every lab shows you how to prevent the vulnerability</li>
+                <li><strong>Practice Ethically:</strong> Apply this knowledge only to authorized systems</li>
+            </ol>
+        </div>
+
+        <!-- Important Notes Section -->
+        <div class="info-box danger mt-2">
+            <h3>🔒 Security & Ethics</h3>
+            <p><strong>Legal Notice:</strong> Unauthorized testing of computer systems is illegal in most jurisdictions. 
+            This lab is for educational purposes only. Use this knowledge responsibly to:</p>
+            <ul style="padding-left: 2rem; margin-top: 0.5rem;">
+                <li>Build more secure applications</li>
+                <li>Participate in authorized bug bounty programs</li>
+                <li>Contribute to a safer internet</li>
+                <li>Pursue a career in cybersecurity</li>
+            </ul>
+            <p style="margin-top: 1rem;"><strong>Never:</strong></p>
+            <ul style="padding-left: 2rem;">
+                <li>Test vulnerabilities on systems without permission</li>
+                <li>Use these techniques maliciously</li>
+                <li>Store or transmit sensitive data insecurely</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script>
+        // Initialize page with common features
+        createHeader('Bug Bounty Frontend Lab', false);
+        
+        // Add smooth animations
+        document.querySelectorAll('.card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add('fade-in');
+        });
+
+        // Log welcome message to console
+        console.log('%c🎯 Bug Bounty Frontend Lab', 'color: #00ff41; font-size: 24px; font-weight: bold;');
+        console.log('%cWelcome to the security learning platform!', 'color: #00d9ff; font-size: 14px;');
+        console.log('%c⚠️ Remember: Only test on systems you own or have permission to test!', 'color: #ff3860; font-size: 12px;');
+    </script>
+</body>
+</html>

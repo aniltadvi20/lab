@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Injection Simulator</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <h1 class="lab-title">💉 SQL Injection Simulator</h1>
+        
+        <div class="lab-description">
+            <h3>📚 What is SQL Injection?</h3>
+            <p>
+                <strong>SQL Injection (SQLi)</strong> is a code injection technique that exploits security 
+                vulnerabilities in an application's database layer. Attackers can insert malicious SQL 
+                statements into input fields, allowing them to manipulate or bypass database queries.
+            </p>
+            <p>
+                This can lead to unauthorized data access, authentication bypass, data modification, 
+                or even complete database takeover. SQL injection is consistently ranked as one of 
+                the most critical web application security risks.
+            </p>
+            <div class="info-box" style="margin-top: 1rem;">
+                <strong>⚠️ Note:</strong> This is a <em>simulation only</em>. No real database is involved. 
+                The simulator analyzes your input and shows what would happen in a vulnerable application.
+            </div>
+        </div>
+
+        <div class="lab-section">
+            <h3>🎯 Mock Login Form</h3>
+            <p>Try to bypass authentication using SQL injection techniques:</p>
+            
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Enter password">
+            </div>
+            
+            <button id="loginBtn" onclick="attemptLogin()">Login</button>
+            <button class="btn-secondary" onclick="resetForm()">Reset</button>
+            
+            <div id="queryDisplay" class="sql-query" style="margin-top: 2rem;">
+                <strong>Constructed SQL Query:</strong>
+                <div id="queryText" style="margin-top: 0.5rem; font-size: 1.1rem;">
+                    <code>SELECT * FROM users WHERE username='' AND password=''</code>
+                </div>
+            </div>
+            
+            <div id="resultBox" class="output-box" style="display: none; margin-top: 1rem;">
+                <div id="resultContent"></div>
+            </div>
+        </div>
+
+        <div class="learning-section">
+            <h3>💡 Example Payloads to Try</h3>
+            <p>Click any payload to auto-fill the form:</p>
+            
+            <div style="background: var(--bg-card); padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+                <p><strong>1. Classic OR Bypass:</strong></p>
+                <button class="btn-small" onclick="setCredentials('admin', &quot;' OR '1'='1&quot;)" 
+                        style="width: 100%; text-align: left; margin-bottom: 0.5rem;">
+                    Username: <code>admin</code> | Password: <code>' OR '1'='1</code>
+                </button>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-left: 1rem;">
+                    Makes the WHERE clause always true
+                </p>
+                
+                <p style="margin-top: 1rem;"><strong>2. OR 1=1 Bypass:</strong></p>
+                <button class="btn-small" onclick="setCredentials('admin', &quot;' OR 1=1--&quot;)" 
+                        style="width: 100%; text-align: left; margin-bottom: 0.5rem;">
+                    Username: <code>admin</code> | Password: <code>' OR 1=1--</code>
+                </button>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-left: 1rem;">
+                    Comments out the rest of the query with --
+                </p>
+                
+                <p style="margin-top: 1rem;"><strong>3. Admin Comment Bypass:</strong></p>
+                <button class="btn-small" onclick="setCredentials(&quot;admin'--&quot;, 'anything')" 
+                        style="width: 100%; text-align: left; margin-bottom: 0.5rem;">
+                    Username: <code>admin'--</code> | Password: <code>anything</code>
+                </button>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-left: 1rem;">
+                    Bypasses password check by commenting it out
+                </p>
+                
+                <p style="margin-top: 1rem;"><strong>4. UNION SELECT Attack:</strong></p>
+                <button class="btn-small" onclick="setCredentials(&quot;' UNION SELECT null, 'admin', 'password'--&quot;, '')" 
+                        style="width: 100%; text-align: left; margin-bottom: 0.5rem;">
+                    Username: <code>' UNION SELECT null, 'admin', 'password'--</code>
+                </button>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-left: 1rem;">
+                    Injects additional SELECT to return custom data
+                </p>
+                
+                <p style="margin-top: 1rem;"><strong>5. Destructive Injection (Simulated):</strong></p>
+                <button class="btn-small" onclick="setCredentials(&quot;admin'; DROP TABLE users--&quot;, '')" 
+                        style="width: 100%; text-align: left; margin-bottom: 0.5rem;">
+                    Username: <code>admin'; DROP TABLE users--</code>
+                </button>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-left: 1rem;">
+                    Would delete the entire users table (not executed here!)
+                </p>
+            </div>
+        </div>
+
+        <div class="info-box danger">
+            <h3>⚠️ Real-World Impact of SQL Injection</h3>
+            <ul style="padding-left: 2rem;">
+                <li><strong>Data Breach:</strong> Access to sensitive user data, passwords, credit cards</li>
+                <li><strong>Authentication Bypass:</strong> Login as any user without knowing their password</li>
+                <li><strong>Data Manipulation:</strong> Modify or delete database records</li>
+                <li><strong>Privilege Escalation:</strong> Gain administrative access</li>
+                <li><strong>Complete Takeover:</strong> Execute system commands on the database server</li>
+                <li><strong>Denial of Service:</strong> Corrupt or delete critical database tables</li>
+            </ul>
+        </div>
+
+        <div class="learning-section">
+            <h3>🔒 How to Prevent SQL Injection</h3>
+            
+            <p><strong>❌ Vulnerable Code (PHP Example):</strong></p>
+            <pre><code>// BAD - String concatenation with user input
+$username = $_POST['username'];
+$password = $_POST['password'];
+$query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+$result = mysqli_query($conn, $query);</code></pre>
+            
+            <p style="margin-top: 1.5rem;"><strong>✅ Safe - Prepared Statements (PHP/PDO):</strong></p>
+            <pre><code>// GOOD - Using prepared statements with parameterized queries
+$stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+$stmt->execute([$username, $password]);
+$result = $stmt->fetch();</code></pre>
+            
+            <p style="margin-top: 1.5rem;"><strong>✅ Safe - Named Parameters (PHP/PDO):</strong></p>
+            <pre><code>// GOOD - Using named parameters
+$stmt = $pdo->prepare("SELECT * FROM users WHERE username = :user AND password = :pass");
+$stmt->execute(['user' => $username, 'pass' => $password]);
+$result = $stmt->fetch();</code></pre>
+            
+            <p style="margin-top: 1.5rem;"><strong>✅ Safe - Parameterized Queries (Node.js):</strong></p>
+            <pre><code>// GOOD - Using parameterized queries in Node.js with mysql2
+const [rows] = await connection.execute(
+    'SELECT * FROM users WHERE username = ? AND password = ?',
+    [username, password]
+);</code></pre>
+            
+            <p style="margin-top: 1.5rem;"><strong>✅ Safe - ORM Example (Python/SQLAlchemy):</strong></p>
+            <pre><code># GOOD - Using ORM with parameterized queries
+user = session.query(User).filter(
+    User.username == username,
+    User.password == password
+).first()</code></pre>
+        </div>
+
+        <div class="info-box success">
+            <h3>✅ Key Takeaways</h3>
+            <ul style="padding-left: 2rem;">
+                <li><strong>Always use parameterized queries/prepared statements</strong> - Never concatenate user input into SQL</li>
+                <li><strong>Use ORMs</strong> - Object-Relational Mappers handle parameterization automatically</li>
+                <li><strong>Input Validation</strong> - Validate and sanitize all user inputs (defense in depth)</li>
+                <li><strong>Least Privilege</strong> - Database users should have minimal necessary permissions</li>
+                <li><strong>WAF</strong> - Web Application Firewall can help detect and block SQL injection attempts</li>
+                <li><strong>Error Messages</strong> - Don't expose detailed database errors to users</li>
+                <li><strong>Regular Testing</strong> - Use automated tools to scan for SQL injection vulnerabilities</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        // Initialize page
+        createHeader('Bug Bounty Frontend Lab', true, ['SQL Injection Simulator']);
+        addEnterKeyListener('loginBtn');
+
+        function attemptLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username && !password) {
+                showStatus('Please enter credentials!', 'warning', 3000);
+                return;
+            }
+            
+            // Construct vulnerable SQL query (for demonstration)
+            const query = `SELECT * FROM users WHERE username='${username}' AND password='${password}'`;
+            
+            // Display the query with syntax highlighting
+            displayQuery(query, username, password);
+            
+            // Analyze for SQL injection
+            const analysis = analyzeInjection(username, password, query);
+            
+            // Display results
+            displayResults(analysis);
+        }
+
+        function displayQuery(query, username, password) {
+            const queryText = document.getElementById('queryText');
+            
+            // Highlight the query
+            let highlighted = highlightSQLInjection(query);
+            
+            queryText.innerHTML = highlighted;
+        }
+
+        function analyzeInjection(username, password, query) {
+            const combinedInput = username + ' ' + password;
+            const detection = detectSQLInjection(combinedInput);
+            
+            let result = {
+                detected: detection.detected,
+                description: detection.description,
+                success: false,
+                explanation: '',
+                impact: '',
+                type: 'info'
+            };
+            
+            if (detection.detected) {
+                result.success = true;
+                result.type = 'error';
+                result.explanation = `🚨 <strong>SQL Injection Detected!</strong><br><br>`;
+                result.explanation += `<strong>Attack Type:</strong> ${detection.description}<br><br>`;
+                
+                // Explain what would happen
+                if (combinedInput.match(/OR.*1.*=.*1/i) || combinedInput.match(/OR.*'.*'.*=.*'/i)) {
+                    result.explanation += `<strong>What happens:</strong> The WHERE clause becomes always true, `;
+                    result.explanation += `returning all users from the database. The attacker logs in as the first user (likely admin).<br><br>`;
+                    result.impact = '✅ Authentication bypassed successfully!';
+                } else if (combinedInput.match(/--/)) {
+                    result.explanation += `<strong>What happens:</strong> The <code>--</code> comments out the rest of the query, `;
+                    result.explanation += `eliminating the password check. If the username exists, login succeeds without a password.<br><br>`;
+                    result.impact = '✅ Password check bypassed!';
+                } else if (combinedInput.match(/UNION/i)) {
+                    result.explanation += `<strong>What happens:</strong> UNION allows combining results from multiple SELECT statements. `;
+                    result.explanation += `The attacker can inject custom data or extract information from other tables.<br><br>`;
+                    result.impact = '✅ Data extraction possible!';
+                } else if (combinedInput.match(/DROP/i)) {
+                    result.explanation += `<strong>What happens:</strong> This would execute a destructive command to delete the entire users table. `;
+                    result.explanation += `All user accounts would be permanently deleted!<br><br>`;
+                    result.impact = '⚠️ CRITICAL: Table deletion attempted! (Not executed in this simulator)';
+                } else {
+                    result.explanation += `<strong>What happens:</strong> The injected SQL modifies the query logic, `;
+                    result.explanation += `potentially allowing unauthorized access or data manipulation.<br><br>`;
+                    result.impact = '✅ Injection successful!';
+                }
+                
+                result.explanation += `<strong>Original Query Logic:</strong><br>`;
+                result.explanation += `<code>Find user WHERE username matches AND password matches</code><br><br>`;
+                result.explanation += `<strong>Injected Query Logic:</strong><br>`;
+                result.explanation += `<code>${escapeHTML(query)}</code>`;
+                
+            } else {
+                result.type = 'info';
+                result.explanation = `<strong>No SQL injection detected.</strong><br><br>`;
+                
+                if (username === 'admin' && password === 'admin123') {
+                    result.explanation += `Valid credentials! In a real system, this would grant access.`;
+                    result.impact = '✅ Login successful with valid credentials';
+                    result.type = 'success';
+                } else {
+                    result.explanation += `The query would execute normally and check if the username and password match a record in the database.`;
+                    result.impact = '❌ Login failed - Invalid credentials';
+                }
+            }
+            
+            return result;
+        }
+
+        function displayResults(analysis) {
+            const resultBox = document.getElementById('resultBox');
+            const resultContent = document.getElementById('resultContent');
+            
+            resultContent.innerHTML = `
+                <div class="status-message status-${analysis.type}">
+                    ${analysis.impact}
+                </div>
+                <div style="margin-top: 1rem;">
+                    ${analysis.explanation}
+                </div>
+            `;
+            
+            resultBox.style.display = 'block';
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            // Log to console
+            if (analysis.detected) {
+                console.log('%c🚨 SQL Injection Detected!', 'color: #ff3860; font-size: 16px; font-weight: bold;');
+                console.log('Attack Type:', analysis.description);
+            } else {
+                console.log('%c✅ No SQL Injection', 'color: #00ff41; font-weight: bold;');
+            }
+        }
+
+        function setCredentials(user, pass) {
+            document.getElementById('username').value = user;
+            document.getElementById('password').value = pass;
+            showStatus('Credentials loaded! Click Login to test.', 'info', 3000);
+        }
+
+        function resetForm() {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('queryText').innerHTML = 
+                "<code>SELECT * FROM users WHERE username='' AND password=''</code>";
+            document.getElementById('resultBox').style.display = 'none';
+            showStatus('Form reset!', 'info', 2000);
+        }
+
+        // Console educational message
+        console.log('%c💉 SQL Injection Simulator', 'color: #00ff41; font-size: 18px; font-weight: bold;');
+        console.log('%cThis is a safe simulation - no real database is involved', 'color: #00d9ff; font-size: 12px;');
+        console.log('%cTry: username="admin" password="\' OR \'1\'=\'1"', 'color: #888888; font-size: 11px;');
+    </script>
+</body>
+</html>
