@@ -75,6 +75,13 @@ header .subtitle {
     50% { opacity: 0.8; }
 }
 
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .warning-banner {
+        animation: none;
+    }
+}
+
 /* Navigation/Breadcrumb */
 .breadcrumb {
     background: var(--bg-card);
