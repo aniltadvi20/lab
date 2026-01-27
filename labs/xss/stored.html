@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stored XSS Lab - localStorage Based</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>🔵 Stored XSS Lab</h1>
+        <h2>localStorage-Based Persistent Vulnerability</h2>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../../index.html">Home</a>
+            <span>></span>
+            <span>Stored XSS</span>
+        </div>
+
+        <div class="warning-banner">
+            ⚠️ FOR EDUCATIONAL PURPOSES ONLY - DO NOT USE ON REAL SYSTEMS
+        </div>
+
+        <div class="lab-description">
+            <h3>📚 What is Stored XSS?</h3>
+            <p>
+                <strong>Stored Cross-Site Scripting (Persistent XSS)</strong> occurs when malicious input is stored
+                (in a database, localStorage, file, etc.) and later displayed to users without proper sanitization.
+                This is considered the most dangerous type of XSS because:
+            </p>
+            <ul>
+                <li>The attack is persistent - it affects all users who view the stored content</li>
+                <li>No user interaction needed beyond viewing the page</li>
+                <li>Can affect many users over an extended period</li>
+            </ul>
+        </div>
+
+        <div class="lab-section">
+            <h3 class="lab-title">🧪 Comment System (Vulnerable)</h3>
+            
+            <div class="form-group">
+                <label class="form-label" for="commentInput">Post a Comment:</label>
+                <textarea id="commentInput" class="form-textarea" placeholder="Write your comment here..."></textarea>
+            </div>
+
+            <button class="btn btn-primary" onclick="postComment()">Post Comment</button>
+            <button class="btn btn-danger" onclick="clearComments()">Clear All Comments</button>
+
+            <div class="output-area" style="margin-top: 30px;">
+                <div class="output-title">💬 Comments:</div>
+                <div id="commentsList"></div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>💡 Try These Payloads</h4>
+            <p>Post these as comments to see the vulnerability in action:</p>
+            <div class="code-block">
+                <code>&lt;img src=x onerror=alert('Stored XSS')&gt;</code>
+            </div>
+            <div class="code-block">
+                <code>&lt;script&gt;alert('This XSS persists!')&lt;/script&gt;</code>
+            </div>
+            <div class="code-block">
+                <code>&lt;img src=x onerror="alert('Executed on every page load!')"&gt;</code>
+            </div>
+            <div class="code-block">
+                <code>&lt;h1 style="color: red;"&gt;DEFACED!&lt;/h1&gt;</code>
+            </div>
+            <p style="margin-top: 15px;">
+                <strong>Notice:</strong> These payloads will be stored in localStorage and execute every time
+                the page loads, demonstrating persistence!
+            </p>
+        </div>
+
+        <div class="info-box">
+            <h4>🔍 Understanding the Vulnerability</h4>
+            <p><strong>Vulnerable Code:</strong></p>
+            <div class="code-block">
+                <code>
+// ❌ VULNERABLE: Storing and displaying user input with innerHTML<br>
+function postComment() {<br>
+&nbsp;&nbsp;const comment = document.getElementById('input').value;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;// Store in localStorage (or database in real app)<br>
+&nbsp;&nbsp;let comments = JSON.parse(localStorage.getItem('comments') || '[]');<br>
+&nbsp;&nbsp;comments.push({text: comment, date: new Date()});<br>
+&nbsp;&nbsp;localStorage.setItem('comments', JSON.stringify(comments));<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;// Display using innerHTML - DANGEROUS!<br>
+&nbsp;&nbsp;displayElement.innerHTML = comment;<br>
+}<br>
+                </code>
+            </div>
+            <p>
+                The problem: User input is stored without sanitization and displayed using <code>innerHTML</code>,
+                allowing malicious scripts to persist and execute for all users.
+            </p>
+            
+            <p style="margin-top: 20px;"><strong>Secure Code:</strong></p>
+            <div class="code-block">
+                <code>
+// ✅ SECURE: Sanitize before storing and use textContent<br>
+function postComment() {<br>
+&nbsp;&nbsp;const comment = document.getElementById('input').value;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;// Sanitize input before storing<br>
+&nbsp;&nbsp;const sanitized = DOMPurify.sanitize(comment);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;// Or escape HTML<br>
+&nbsp;&nbsp;const escaped = escapeHtml(comment);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;// Store sanitized version<br>
+&nbsp;&nbsp;localStorage.setItem('comments', JSON.stringify([escaped]));<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;// Display using textContent<br>
+&nbsp;&nbsp;displayElement.textContent = escaped;<br>
+}<br>
+                </code>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>⚠️ Real-World Impact</h4>
+            <ul>
+                <li><strong>Mass Account Compromise:</strong> Steal cookies/tokens from all users who view the content</li>
+                <li><strong>Worm Propagation:</strong> Create self-propagating XSS attacks</li>
+                <li><strong>Persistent Backdoors:</strong> Maintain long-term access to user accounts</li>
+                <li><strong>Data Harvesting:</strong> Collect sensitive information from multiple users</li>
+                <li><strong>Social Engineering:</strong> Display fake security warnings or login prompts</li>
+                <li><strong>Reputation Damage:</strong> Deface pages viewed by all users</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>🎯 Common Attack Vectors</h4>
+            <ul>
+                <li><strong>Comment Systems:</strong> Blog comments, forum posts, reviews</li>
+                <li><strong>User Profiles:</strong> Bio, username, profile fields</li>
+                <li><strong>File Uploads:</strong> Filenames, metadata, SVG files</li>
+                <li><strong>Search Functionality:</strong> Stored search queries</li>
+                <li><strong>Messaging Systems:</strong> Private messages, chat applications</li>
+                <li><strong>Form Data:</strong> Any persistent form submissions</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>🔒 Prevention Techniques</h4>
+            <ul>
+                <li><strong>Input Validation:</strong> Validate all user input on both client and server</li>
+                <li><strong>Output Encoding:</strong> Encode data before displaying (HTML entity encoding)</li>
+                <li><strong>Use textContent:</strong> Never use innerHTML for user-generated content</li>
+                <li><strong>Sanitization Libraries:</strong> Use DOMPurify or similar tools</li>
+                <li><strong>Content Security Policy:</strong> Implement strict CSP headers</li>
+                <li><strong>HttpOnly Cookies:</strong> Prevent JavaScript access to sensitive cookies</li>
+                <li><strong>Regular Audits:</strong> Scan stored data for malicious content</li>
+                <li><strong>Context-Aware Encoding:</strong> Encode based on where data is displayed (HTML, JS, CSS, URL)</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>🧪 Lab Details</h4>
+            <p>
+                This lab uses <code>localStorage</code> to simulate a database. In a real application,
+                comments would be stored in a backend database. The vulnerability and prevention techniques
+                are the same - never trust stored data and always sanitize/encode when displaying.
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>Try this:</strong> Post a malicious comment, then reload the page. Notice how the
+                XSS payload executes again! This demonstrates the persistent nature of Stored XSS.
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-disclaimer">
+            ⚠️ DISCLAIMER: This vulnerability is demonstrated in a controlled environment for educational purposes only.
+            Never exploit vulnerabilities on real systems without proper authorization.
+        </div>
+    </footer>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        // VULNERABLE FUNCTIONS - For educational demonstration only
+        
+        function postComment() {
+            const commentInput = document.getElementById('commentInput');
+            const comment = commentInput.value.trim();
+
+            if (!comment) {
+                alert('Please enter a comment!');
+                return;
+            }
+
+            // Get existing comments from localStorage
+            let comments = JSON.parse(localStorage.getItem('xss_comments') || '[]');
+            
+            // Add new comment with timestamp
+            comments.push({
+                text: comment,
+                timestamp: new Date().toISOString()
+            });
+
+            // ❌ VULNERABLE: Storing user input without sanitization
+            localStorage.setItem('xss_comments', JSON.stringify(comments));
+
+            // Clear input and reload comments
+            commentInput.value = '';
+            loadComments();
+
+            // Show success message
+            alert('Comment posted! Notice it persists even after page reload.');
+        }
+
+        function loadComments() {
+            const commentsList = document.getElementById('commentsList');
+            const comments = JSON.parse(localStorage.getItem('xss_comments') || '[]');
+
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<div class="message message-info">No comments yet. Be the first to comment!</div>';
+                return;
+            }
+
+            // Clear existing comments
+            commentsList.innerHTML = '';
+
+            // Display each comment
+            comments.forEach((comment, index) => {
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment-item';
+                
+                const meta = document.createElement('div');
+                meta.className = 'comment-meta';
+                const date = new Date(comment.timestamp);
+                meta.textContent = `Comment #${index + 1} - ${date.toLocaleString()}`;
+                commentDiv.appendChild(meta);
+
+                const content = document.createElement('div');
+                // ❌ VULNERABLE: Using innerHTML to display stored user content
+                // This is intentionally vulnerable for educational purposes
+                content.innerHTML = comment.text;
+                commentDiv.appendChild(content);
+
+                commentsList.appendChild(commentDiv);
+            });
+
+            // Add educational note
+            const note = document.createElement('div');
+            note.className = 'message message-info';
+            note.style.marginTop = '20px';
+            note.textContent = '💡 Notice: Comments are stored in localStorage and rendered with innerHTML. Any HTML/JavaScript in comments will execute!';
+            commentsList.appendChild(note);
+        }
+
+        function clearComments() {
+            if (confirm('Are you sure you want to delete all comments?')) {
+                localStorage.removeItem('xss_comments');
+                loadComments();
+                alert('All comments cleared!');
+            }
+        }
+
+        // Load comments when page loads
+        window.addEventListener('load', loadComments);
+
+        // Add Enter key support (Ctrl+Enter to post)
+        document.getElementById('commentInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                postComment();
+            }
+        });
+    </script>
+</body>
+</html>

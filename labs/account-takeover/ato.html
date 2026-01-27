@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Takeover Lab - Logic Flaws</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>🔐 Account Takeover Lab</h1>
+        <h2>Authentication & Session Management Logic Flaws</h2>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../../index.html">Home</a>
+            <span>></span>
+            <span>Account Takeover</span>
+        </div>
+
+        <div class="warning-banner">
+            ⚠️ FOR EDUCATIONAL PURPOSES ONLY - DO NOT USE ON REAL SYSTEMS
+        </div>
+
+        <div class="lab-description">
+            <h3>📚 What is Account Takeover?</h3>
+            <p>
+                <strong>Account Takeover (ATO)</strong> occurs when an attacker gains unauthorized access to a user's
+                account. This can happen through various logic flaws in authentication, password reset, session
+                management, and authorization mechanisms.
+            </p>
+            <p>
+                Unlike technical vulnerabilities like XSS or SQLi, these are often <strong>business logic flaws</strong>
+                - the code works as programmed, but the design is fundamentally insecure.
+            </p>
+        </div>
+
+        <!-- Section 1: Weak Password Reset -->
+        <div class="lab-section">
+            <h3 class="lab-title">🔑 Section 1: Weak Password Reset</h3>
+            
+            <div class="lab-description">
+                <h4>Vulnerability: Predictable Reset Token in URL</h4>
+                <p>
+                    Many applications expose password reset tokens in URLs. If these tokens are predictable,
+                    sequential, or reusable, attackers can reset other users' passwords.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="resetEmail">Email Address:</label>
+                <input type="email" id="resetEmail" class="form-input" placeholder="Enter email for password reset">
+            </div>
+
+            <button class="btn btn-primary" onclick="requestReset()">Request Password Reset</button>
+            <button class="btn btn-secondary" onclick="resetSection1()">Reset</button>
+
+            <div class="output-area" id="resetOutput">
+                <div class="output-title">Password Reset Link:</div>
+            </div>
+
+            <div class="info-box">
+                <h4>❌ What's Wrong?</h4>
+                <ul>
+                    <li><strong>Token in URL:</strong> Reset token is visible in the browser address bar</li>
+                    <li><strong>Predictable Token:</strong> Token is based on timestamp (easily guessable)</li>
+                    <li><strong>No Expiration:</strong> Token doesn't expire</li>
+                    <li><strong>Reusable:</strong> Token can be used multiple times</li>
+                </ul>
+                
+                <h4 style="margin-top: 15px;">✅ Secure Implementation:</h4>
+                <ul>
+                    <li>Use cryptographically secure random tokens (UUID, crypto.randomBytes)</li>
+                    <li>Send token via email only, not in URL parameters</li>
+                    <li>Set short expiration time (15-30 minutes)</li>
+                    <li>Single-use tokens (invalidate after use)</li>
+                    <li>Rate limit reset requests</li>
+                    <li>Require email verification</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 2: Broken OTP Verification -->
+        <div class="lab-section">
+            <h3 class="lab-title">🔢 Section 2: Broken OTP Verification</h3>
+            
+            <div class="lab-description">
+                <h4>Vulnerability: OTP Exposed in HTML Comments</h4>
+                <p>
+                    This simulates a common mistake where sensitive data (like OTP codes) is leaked in HTML
+                    comments, JavaScript source, or API responses.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Enter 6-digit OTP:</label>
+                <input type="text" id="otpInput" class="form-input" placeholder="123456" maxlength="6">
+            </div>
+
+            <button class="btn btn-primary" onclick="verifyOTP()">Verify OTP</button>
+            <button class="btn btn-secondary" onclick="resetSection2()">Reset</button>
+
+            <div class="output-area" id="otpOutput">
+                <div class="output-title">Verification Result:</div>
+            </div>
+
+            <!-- ❌ VULNERABLE: OTP exposed in HTML comment -->
+            <!-- DEBUG: Current OTP is 123456 -->
+            <!-- TODO: Remove this before production! -->
+
+            <div class="info-box">
+                <h4>❌ What's Wrong?</h4>
+                <ul>
+                    <li><strong>OTP in HTML Comments:</strong> Right-click → View Page Source to see the OTP!</li>
+                    <li><strong>No Rate Limiting:</strong> Unlimited attempts allowed</li>
+                    <li><strong>Predictable OTP:</strong> Simple sequential numbers</li>
+                    <li><strong>No Expiration:</strong> OTP never expires</li>
+                </ul>
+                
+                <h4 style="margin-top: 15px;">💡 How to Find It:</h4>
+                <p>
+                    <strong>Right-click</strong> on this page and select <strong>"View Page Source"</strong>.
+                    Search for "DEBUG" or "OTP" in the HTML. You'll find the correct OTP in a comment!
+                </p>
+                
+                <h4 style="margin-top: 15px;">✅ Secure Implementation:</h4>
+                <ul>
+                    <li>Never expose OTP in client-side code</li>
+                    <li>Verify OTP on server-side only</li>
+                    <li>Implement rate limiting (max 3-5 attempts)</li>
+                    <li>Use short expiration (5-10 minutes)</li>
+                    <li>Use cryptographically secure random numbers</li>
+                    <li>Invalidate OTP after successful use</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 3: Session Fixation -->
+        <div class="lab-section">
+            <h3 class="lab-title">🎫 Section 3: Session Fixation</h3>
+            
+            <div class="lab-description">
+                <h4>Vulnerability: Session ID in URL Parameter</h4>
+                <p>
+                    Session Fixation occurs when an application accepts session IDs from URL parameters or
+                    doesn't regenerate session IDs after authentication.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="sessionUsername">Username:</label>
+                <input type="text" id="sessionUsername" class="form-input" placeholder="Enter username">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="sessionPassword">Password:</label>
+                <input type="password" id="sessionPassword" class="form-input" placeholder="Enter password">
+            </div>
+
+            <button class="btn btn-primary" onclick="sessionLogin()">Login</button>
+            <button class="btn btn-secondary" onclick="resetSection3()">Reset</button>
+
+            <div class="output-area" id="sessionOutput">
+                <div class="output-title">Session Information:</div>
+            </div>
+
+            <div class="info-box">
+                <h4>❌ What's Wrong?</h4>
+                <ul>
+                    <li><strong>Session ID in URL:</strong> Session ID exposed in browser address bar</li>
+                    <li><strong>No Regeneration:</strong> Same session ID before and after login</li>
+                    <li><strong>Predictable ID:</strong> Sequential or timestamp-based session IDs</li>
+                    <li><strong>Accepts External ID:</strong> Application accepts session IDs from URL parameters</li>
+                </ul>
+                
+                <h4 style="margin-top: 15px;">🎯 Attack Scenario:</h4>
+                <ol>
+                    <li>Attacker generates a session: <code>?sessionid=12345</code></li>
+                    <li>Attacker tricks victim into clicking: <code>vulnerable-site.com?sessionid=12345</code></li>
+                    <li>Victim logs in with the attacker's session ID</li>
+                    <li>Attacker now has access using <code>sessionid=12345</code></li>
+                </ol>
+                
+                <h4 style="margin-top: 15px;">✅ Secure Implementation:</h4>
+                <ul>
+                    <li>Never accept session IDs from URL parameters</li>
+                    <li>Store session IDs in HTTP-only cookies</li>
+                    <li>Regenerate session ID after login</li>
+                    <li>Use cryptographically random session IDs</li>
+                    <li>Set Secure and SameSite flags on cookies</li>
+                    <li>Implement session timeout</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>⚠️ Real-World Impact of Account Takeover</h4>
+            <ul>
+                <li><strong>Financial Loss:</strong> Access to banking, e-commerce accounts</li>
+                <li><strong>Identity Theft:</strong> Personal information exposure</li>
+                <li><strong>Privacy Breach:</strong> Access to private messages, photos</li>
+                <li><strong>Reputation Damage:</strong> Impersonation, fraudulent activities</li>
+                <li><strong>Data Breach:</strong> Corporate account compromise</li>
+                <li><strong>Lateral Movement:</strong> Using one account to attack others</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>🔍 Common ATO Techniques</h4>
+            <ul>
+                <li><strong>Credential Stuffing:</strong> Using leaked passwords from other breaches</li>
+                <li><strong>Brute Force:</strong> Trying multiple password combinations</li>
+                <li><strong>Session Hijacking:</strong> Stealing active session tokens</li>
+                <li><strong>Password Reset Exploitation:</strong> Abusing password recovery flows</li>
+                <li><strong>Social Engineering:</strong> Tricking users or support staff</li>
+                <li><strong>Man-in-the-Middle:</strong> Intercepting authentication data</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-disclaimer">
+            ⚠️ DISCLAIMER: These vulnerabilities are demonstrated in a controlled environment for educational purposes only.
+            Never exploit vulnerabilities on real systems without proper authorization.
+        </div>
+    </footer>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        // Section 1: Password Reset
+        function requestReset() {
+            const email = document.getElementById('resetEmail').value;
+            const output = document.getElementById('resetOutput');
+
+            if (!email) {
+                output.innerHTML = '<div class="output-title">Password Reset Link:</div><div class="message message-error">Please enter an email address!</div>';
+                return;
+            }
+
+            // ❌ VULNERABLE: Generate predictable token based on timestamp
+            const timestamp = Date.now();
+            const token = btoa(email + timestamp).substring(0, 16); // Predictable!
+
+            const resetLink = `https://example.com/reset-password?token=${token}&email=${email}`;
+
+            let result = '<div class="output-title">Password Reset Link:</div>';
+            result += '<div class="message message-success">Password reset email sent to: ' + email + '</div>';
+            result += '<div class="code-block" style="word-break: break-all;">' + resetLink + '</div>';
+            result += '<div class="message message-error" style="margin-top: 15px;">';
+            result += '<strong>🚨 VULNERABILITY DEMONSTRATED:</strong><br>';
+            result += '• Token is visible in URL (address bar)<br>';
+            result += '• Token is predictable (based on timestamp)<br>';
+            result += '• An attacker could guess tokens for other users<br>';
+            result += '• Token appears in browser history and server logs';
+            result += '</div>';
+
+            output.innerHTML = result;
+        }
+
+        function resetSection1() {
+            document.getElementById('resetEmail').value = '';
+            document.getElementById('resetOutput').innerHTML = '<div class="output-title">Password Reset Link:</div>';
+        }
+
+        // Section 2: OTP Verification
+        function verifyOTP() {
+            const otpInput = document.getElementById('otpInput').value;
+            const output = document.getElementById('otpOutput');
+            
+            // The correct OTP (also leaked in HTML comment above!)
+            const correctOTP = '123456';
+
+            if (!otpInput) {
+                output.innerHTML = '<div class="output-title">Verification Result:</div><div class="message message-error">Please enter an OTP!</div>';
+                return;
+            }
+
+            let result = '<div class="output-title">Verification Result:</div>';
+            
+            if (otpInput === correctOTP) {
+                result += '<div class="message message-success">';
+                result += '<strong>✅ OTP VERIFIED!</strong><br><br>';
+                result += 'Access granted. You\'ve successfully bypassed 2FA!';
+                result += '</div>';
+                result += '<div class="message message-info" style="margin-top: 15px;">';
+                result += '<strong>💡 Did you find the OTP?</strong><br>';
+                result += 'If you guessed or found it in the HTML source (View Page Source), ';
+                result += 'you\'ve discovered a critical vulnerability! The OTP is exposed in an HTML comment.';
+                result += '</div>';
+            } else {
+                result += '<div class="message message-error">';
+                result += '<strong>❌ INVALID OTP</strong><br><br>';
+                result += 'Hint: Try viewing the page source (Right-click → View Page Source)';
+                result += '</div>';
+            }
+
+            output.innerHTML = result;
+        }
+
+        function resetSection2() {
+            document.getElementById('otpInput').value = '';
+            document.getElementById('otpOutput').innerHTML = '<div class="output-title">Verification Result:</div>';
+        }
+
+        // Section 3: Session Fixation
+        let currentSessionId = null;
+
+        function sessionLogin() {
+            const username = document.getElementById('sessionUsername').value;
+            const password = document.getElementById('sessionPassword').value;
+            const output = document.getElementById('sessionOutput');
+
+            if (!username || !password) {
+                output.innerHTML = '<div class="output-title">Session Information:</div><div class="message message-error">Please enter both username and password!</div>';
+                return;
+            }
+
+            // ❌ VULNERABLE: Session ID doesn't change after login
+            // In real attack, this would be set by attacker in URL
+            if (!currentSessionId) {
+                currentSessionId = 'SESSION' + Math.floor(Math.random() * 10000);
+            }
+
+            let result = '<div class="output-title">Session Information:</div>';
+            result += '<div class="message message-success">';
+            result += '<strong>✅ LOGIN SUCCESSFUL</strong><br><br>';
+            result += 'Welcome back, ' + username + '!';
+            result += '</div>';
+            
+            result += '<div class="code-block">';
+            result += '<strong>Session URL:</strong><br>';
+            result += `https://example.com/dashboard?sessionid=${currentSessionId}`;
+            result += '</div>';
+
+            result += '<div class="message message-error" style="margin-top: 15px;">';
+            result += '<strong>🚨 VULNERABILITY DEMONSTRATED:</strong><br>';
+            result += '• Session ID is exposed in URL parameter<br>';
+            result += '• Session ID was NOT regenerated after login<br>';
+            result += '• If an attacker set this session ID before login, they now have access<br>';
+            result += '• Session ID: <code>' + currentSessionId + '</code>';
+            result += '</div>';
+
+            output.innerHTML = result;
+        }
+
+        function resetSection3() {
+            document.getElementById('sessionUsername').value = '';
+            document.getElementById('sessionPassword').value = '';
+            document.getElementById('sessionOutput').innerHTML = '<div class="output-title">Session Information:</div>';
+            currentSessionId = null;
+        }
+
+        // Add Enter key support for all forms
+        document.getElementById('resetEmail').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') requestReset();
+        });
+        document.getElementById('otpInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyOTP();
+        });
+        document.getElementById('sessionPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sessionLogin();
+        });
+    </script>
+</body>
+</html>

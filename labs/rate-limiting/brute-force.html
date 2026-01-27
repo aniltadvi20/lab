@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Limiting Lab - Brute Force Protection</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>⚡ Rate Limiting Lab</h1>
+        <h2>Brute Force Protection</h2>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../../index.html">Home</a>
+            <span>></span>
+            <span>Rate Limiting</span>
+        </div>
+
+        <div class="warning-banner">
+            ⚠️ FOR EDUCATIONAL PURPOSES ONLY - DO NOT USE ON REAL SYSTEMS
+        </div>
+
+        <div class="lab-description">
+            <h3>📚 What is Rate Limiting?</h3>
+            <p>
+                <strong>Rate Limiting</strong> is a security control that restricts the number of requests a user
+                can make within a specific time period. It's crucial for preventing:
+            </p>
+            <ul>
+                <li><strong>Brute Force Attacks:</strong> Automated attempts to guess passwords, PINs, or tokens</li>
+                <li><strong>Denial of Service (DoS):</strong> Overwhelming the server with requests</li>
+                <li><strong>Resource Abuse:</strong> Excessive use of expensive operations</li>
+                <li><strong>Credential Stuffing:</strong> Testing large lists of stolen credentials</li>
+            </ul>
+        </div>
+
+        <div class="lab-section">
+            <h3 class="lab-title">🧪 PIN Verification Demo</h3>
+            
+            <div class="info-box" style="background-color: rgba(0, 217, 255, 0.1);">
+                <h4>📌 Demo Information</h4>
+                <p><strong>Correct PIN:</strong> <code style="color: var(--accent-green); font-size: 1.2rem;">1234</code></p>
+                <p>Try guessing the PIN with and without rate limiting enabled to see the difference!</p>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="rateLimitToggle" checked onchange="toggleRateLimit()">
+                <label for="rateLimitToggle">
+                    <strong>Enable Rate Limiting</strong> (Max 5 attempts, 30 second cooldown)
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="pinInput">Enter 4-digit PIN:</label>
+                <input type="text" id="pinInput" class="form-input" placeholder="0000" maxlength="4">
+            </div>
+
+            <button class="btn btn-primary" id="submitBtn" onclick="submitPIN()">Submit Attempt</button>
+            <button class="btn btn-secondary" onclick="resetLab()">Reset Lab</button>
+
+            <div class="counter-display">
+                <div class="counter-number" id="attemptCounter">0</div>
+                <div class="counter-label">Total Attempts</div>
+            </div>
+
+            <div id="cooldownTimer" style="display: none;">
+                <div class="message message-error">
+                    <strong>🚫 TOO MANY ATTEMPTS!</strong><br>
+                    Please wait <span id="cooldownTime">30</span> seconds before trying again.
+                </div>
+            </div>
+
+            <div class="output-area" id="output">
+                <div class="output-title">Status:</div>
+                <div class="message message-info">Ready to test. Try entering a PIN.</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>🎯 Try This Experiment</h4>
+            <ol>
+                <li><strong>With Rate Limiting OFF:</strong>
+                    <ul>
+                        <li>Try multiple incorrect PINs (e.g., 0000, 1111, 2222, 3333, etc.)</li>
+                        <li>Notice you can keep trying indefinitely</li>
+                        <li>This allows brute force attacks (10,000 possible 4-digit combinations)</li>
+                    </ul>
+                </li>
+                <li><strong>With Rate Limiting ON:</strong>
+                    <ul>
+                        <li>Try 5 incorrect PINs</li>
+                        <li>After 5 attempts, you'll be locked out for 30 seconds</li>
+                        <li>This makes brute force attacks impractical</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="info-box">
+            <h4>🔍 Understanding the Vulnerability</h4>
+            <p><strong>Without Rate Limiting:</strong></p>
+            <div class="code-block">
+                <code>
+// ❌ VULNERABLE: No protection against brute force<br>
+function verifyPIN(pin) {<br>
+&nbsp;&nbsp;if (pin === correctPIN) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return { success: true };<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;return { success: false };<br>
+}<br>
+<br>
+// Attacker can try all 10,000 combinations!<br>
+for (let i = 0; i < 10000; i++) {<br>
+&nbsp;&nbsp;verifyPIN(i.toString().padStart(4, '0'));<br>
+}<br>
+                </code>
+            </div>
+            
+            <p style="margin-top: 20px;"><strong>With Rate Limiting:</strong></p>
+            <div class="code-block">
+                <code>
+// ✅ SECURE: Rate limiting implemented<br>
+const attempts = {};<br>
+<br>
+function verifyPIN(pin, userId) {<br>
+&nbsp;&nbsp;// Check attempt count<br>
+&nbsp;&nbsp;if (attempts[userId] >= 5) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const timeSinceFirst = Date.now() - attempts[userId].firstAttempt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if (timeSinceFirst < 30000) { // 30 seconds<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return { error: 'Too many attempts. Try again later.' };<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Reset after cooldown<br>
+&nbsp;&nbsp;&nbsp;&nbsp;attempts[userId] = 0;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;// Increment attempts<br>
+&nbsp;&nbsp;attempts[userId]++;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;// Verify PIN<br>
+&nbsp;&nbsp;if (pin === correctPIN) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return { success: true };<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;return { success: false };<br>
+}<br>
+                </code>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>⚠️ Real-World Impact</h4>
+            <ul>
+                <li><strong>Account Compromise:</strong> Attackers can guess weak passwords/PINs</li>
+                <li><strong>Data Breach:</strong> Unauthorized access to sensitive information</li>
+                <li><strong>Financial Loss:</strong> Brute forcing payment PINs, OTPs</li>
+                <li><strong>Service Disruption:</strong> Resource exhaustion from automated attacks</li>
+                <li><strong>API Abuse:</strong> Excessive calls to expensive endpoints</li>
+            </ul>
+            
+            <p style="margin-top: 15px;"><strong>Real Example:</strong></p>
+            <p>
+                A 4-digit PIN has 10,000 possible combinations (0000-9999). Without rate limiting,
+                an attacker could try all combinations in seconds using automation. With rate limiting
+                of 5 attempts per 30 seconds, it would take over 16 hours to try all combinations!
+            </p>
+        </div>
+
+        <div class="info-box">
+            <h4>🔒 Rate Limiting Best Practices</h4>
+            <ul>
+                <li><strong>Failed Login Attempts:</strong> Limit to 3-5 attempts, then lockout/captcha</li>
+                <li><strong>Password Reset:</strong> Rate limit reset requests to prevent email bombing</li>
+                <li><strong>OTP Verification:</strong> Max 3-5 attempts, then invalidate OTP</li>
+                <li><strong>API Endpoints:</strong> Implement per-user and global rate limits</li>
+                <li><strong>Account Lockout:</strong> Temporary lock after repeated failures</li>
+                <li><strong>Progressive Delays:</strong> Increase delay with each failed attempt</li>
+                <li><strong>CAPTCHA:</strong> Require human verification after threshold</li>
+                <li><strong>IP-based Limiting:</strong> Track attempts by IP address</li>
+                <li><strong>Account-based Limiting:</strong> Track attempts per account</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>📊 Rate Limiting Strategies</h4>
+            <ul>
+                <li><strong>Fixed Window:</strong> X requests per fixed time period (e.g., 100/hour)</li>
+                <li><strong>Sliding Window:</strong> More accurate, prevents burst attacks at boundaries</li>
+                <li><strong>Token Bucket:</strong> Allows bursts but limits average rate</li>
+                <li><strong>Leaky Bucket:</strong> Smooths out traffic spikes</li>
+                <li><strong>Adaptive Rate Limiting:</strong> Adjusts based on user behavior/patterns</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h4>💡 Detection Tips</h4>
+            <p>Test for missing rate limiting:</p>
+            <ul>
+                <li>Try multiple failed login attempts (10+) - are you blocked?</li>
+                <li>Request password reset multiple times - any limits?</li>
+                <li>Make rapid API calls - do you get rate limited?</li>
+                <li>Check response headers for rate limit info (X-RateLimit-*)</li>
+                <li>Use tools like Burp Intruder to automate testing</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-disclaimer">
+            ⚠️ DISCLAIMER: This lab demonstrates the importance of rate limiting in a controlled environment.
+            Never attempt brute force attacks on real systems without proper authorization.
+        </div>
+    </footer>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        // Configuration
+        const CORRECT_PIN = '1234';
+        const MAX_ATTEMPTS = 5;
+        const COOLDOWN_SECONDS = 30;
+
+        // State
+        let totalAttempts = 0;
+        let failedAttempts = 0;
+        let rateLimitEnabled = true;
+        let isLockedOut = false;
+        let cooldownInterval = null;
+
+        function submitPIN() {
+            if (isLockedOut) {
+                return;
+            }
+
+            const pinInput = document.getElementById('pinInput').value;
+            const output = document.getElementById('output');
+
+            if (!pinInput || pinInput.length !== 4) {
+                output.innerHTML = '<div class="output-title">Status:</div><div class="message message-error">Please enter a 4-digit PIN!</div>';
+                return;
+            }
+
+            totalAttempts++;
+            updateAttemptCounter();
+
+            // Check rate limiting
+            if (rateLimitEnabled) {
+                failedAttempts++;
+
+                if (failedAttempts >= MAX_ATTEMPTS && pinInput !== CORRECT_PIN) {
+                    // Lock out user
+                    startCooldown();
+                    output.innerHTML = '<div class="output-title">Status:</div><div class="message message-error"><strong>🚫 ACCOUNT LOCKED</strong><br>Too many failed attempts. Please wait ' + COOLDOWN_SECONDS + ' seconds.</div>';
+                    return;
+                }
+            }
+
+            // Verify PIN
+            if (pinInput === CORRECT_PIN) {
+                output.innerHTML = '<div class="output-title">Status:</div><div class="message message-success"><strong>✅ PIN CORRECT!</strong><br><br>Access granted. PIN verified successfully!</div>';
+                failedAttempts = 0;
+                document.getElementById('pinInput').value = '';
+            } else {
+                let result = '<div class="output-title">Status:</div>';
+                result += '<div class="message message-error"><strong>❌ INCORRECT PIN</strong><br><br>';
+                result += 'PIN verification failed. Try again.</div>';
+
+                if (rateLimitEnabled) {
+                    const remaining = MAX_ATTEMPTS - failedAttempts;
+                    result += '<div class="message message-info" style="margin-top: 15px;">';
+                    result += '<strong>⚠️ Rate Limiting Active</strong><br>';
+                    result += 'Failed attempts: ' + failedAttempts + ' / ' + MAX_ATTEMPTS + '<br>';
+                    result += 'Remaining attempts: ' + remaining;
+                    result += '</div>';
+                } else {
+                    result += '<div class="message message-error" style="margin-top: 15px;">';
+                    result += '<strong>🚨 NO RATE LIMITING!</strong><br>';
+                    result += 'You can try unlimited times. This allows brute force attacks!';
+                    result += '</div>';
+                }
+
+                output.innerHTML = result;
+            }
+
+            document.getElementById('pinInput').value = '';
+        }
+
+        function startCooldown() {
+            isLockedOut = true;
+            document.getElementById('cooldownTimer').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').style.opacity = '0.5';
+            document.getElementById('submitBtn').style.cursor = 'not-allowed';
+
+            let remainingSeconds = COOLDOWN_SECONDS;
+            document.getElementById('cooldownTime').textContent = remainingSeconds;
+
+            cooldownInterval = setInterval(() => {
+                remainingSeconds--;
+                document.getElementById('cooldownTime').textContent = remainingSeconds;
+
+                if (remainingSeconds <= 0) {
+                    endCooldown();
+                }
+            }, 1000);
+        }
+
+        function endCooldown() {
+            clearInterval(cooldownInterval);
+            isLockedOut = false;
+            failedAttempts = 0;
+            document.getElementById('cooldownTimer').style.display = 'none';
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').style.opacity = '1';
+            document.getElementById('submitBtn').style.cursor = 'pointer';
+            
+            const output = document.getElementById('output');
+            output.innerHTML = '<div class="output-title">Status:</div><div class="message message-success">Cooldown ended. You can try again now.</div>';
+        }
+
+        function toggleRateLimit() {
+            rateLimitEnabled = document.getElementById('rateLimitToggle').checked;
+            const output = document.getElementById('output');
+            
+            if (rateLimitEnabled) {
+                output.innerHTML = '<div class="output-title">Status:</div><div class="message message-success"><strong>✅ Rate Limiting ENABLED</strong><br>Protection active. Max ' + MAX_ATTEMPTS + ' attempts allowed.</div>';
+            } else {
+                output.innerHTML = '<div class="output-title">Status:</div><div class="message message-error"><strong>⚠️ Rate Limiting DISABLED</strong><br>No protection! Unlimited attempts allowed - vulnerable to brute force.</div>';
+            }
+
+            // Reset attempts when toggling
+            failedAttempts = 0;
+        }
+
+        function updateAttemptCounter() {
+            document.getElementById('attemptCounter').textContent = totalAttempts;
+        }
+
+        function resetLab() {
+            totalAttempts = 0;
+            failedAttempts = 0;
+            isLockedOut = false;
+            
+            if (cooldownInterval) {
+                clearInterval(cooldownInterval);
+            }
+
+            updateAttemptCounter();
+            document.getElementById('pinInput').value = '';
+            document.getElementById('cooldownTimer').style.display = 'none';
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').style.opacity = '1';
+            document.getElementById('submitBtn').style.cursor = 'pointer';
+            document.getElementById('output').innerHTML = '<div class="output-title">Status:</div><div class="message message-info">Lab reset. Ready to test again.</div>';
+        }
+
+        // Add Enter key support
+        document.getElementById('pinInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !isLockedOut) {
+                submitPIN();
+            }
+        });
+
+        // Initialize
+        document.getElementById('rateLimitToggle').checked = true;
+    </script>
+</body>
+</html>
