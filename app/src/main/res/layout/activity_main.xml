@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/incognitoSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/incognito"
+            android:padding="16dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/urlInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:endIconMode="action"
+            app:endIconDrawable="@drawable/ic_refresh"
+            app:endIconContentDescription="@string/pull_to_refresh">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/urlInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/search_hint"
+                android:imeOptions="actionGo"
+                android:inputType="textUri"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="Back"
+                android:src="@drawable/ic_back" />
+
+            <ImageButton
+                android:id="@+id/forwardButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="Forward"
+                android:src="@drawable/ic_forward" />
+
+            <ImageButton
+                android:id="@+id/desktopToggle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="Desktop mode"
+                android:src="@drawable/ic_desktop" />
+
+            <ImageButton
+                android:id="@+id/addTabButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="New Tab"
+                android:src="@drawable/ic_tab" />
+        </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <FrameLayout
+            android:id="@+id/webContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress"
+        style="@style/Widget.Material3.LinearProgressIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:visibility="gone"
+        app:indeterminate="false"
+        app:layout_anchorGravity="top" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
