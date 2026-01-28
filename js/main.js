@@ -841,172 +841,115 @@ document.addEventListener('DOMContentLoaded', function() {
 function generateAllCommands() {
     const domainInputEl = document.getElementById('domain-input');
     const domainInput = domainInputEl.value.trim();
-    
-    if (!domainInput) {
-        // Visual feedback instead of alert
-        domainInputEl.style.borderColor = '#ff3860';
-        domainInputEl.focus();
-        setTimeout(() => {
-            domainInputEl.style.borderColor = '';
-        }, 2000);
-        return;
-    }
-    
-    const domain = parseDomain(domainInput);
-    
-    // Validate parsed domain is not empty
+    const domain = parseDomain(domainInput || '');
+
     if (!domain) {
         domainInputEl.style.borderColor = '#ff3860';
         domainInputEl.focus();
         setTimeout(() => {
             domainInputEl.style.borderColor = '';
-        }, 2000);
+        }, 1500);
         return;
     }
-    
-    updateReconCommands(domain);
-    updateHttpProbingCommands(domain);
-    updateUrlCollectionCommands(domain);
-    updateJsReconCommands(domain);
-    updateParamDiscoveryCommands(domain);
-    updateVulnScanningCommands(domain);
+
+    updateSubfinder(domain);
+    updateAmass(domain);
+    updateAssetfinder(domain);
+    updateFindomain(domain);
+    updateChaos(domain);
+    updateCrt(domain);
+    updateHttpx(domain);
+    updateUrlCollection(domain);
+    updateJs(domain);
+    updateParams(domain);
+    updateNuclei(domain);
 }
 
 /**
  * Update individual card commands
  */
-function updateReconCommands(domain) {
-    const commands = `1 subfinder -d ${domain} -all -recursive
-2 amass enum -passive -d ${domain}
-3 assetfinder --subs-only ${domain}
-4 findomain -t ${domain}
-5 chaos -d ${domain}
-6 crt.sh ${domain}
-7 shosubgo -d ${domain} -s shodan-api-key
-8 subfinder -d ${domain} | httpx -silent`;
-    
-    document.getElementById('recon-commands').textContent = commands;
+function updateSubfinder(domain) {
+    document.getElementById('subfinder-commands').textContent =
+`subfinder -d ${domain} -all -recursive`;
 }
 
-function updateHttpProbingCommands(domain) {
-    const commands = `1 httpx -l subdomains.txt -o live-hosts.txt
-2 httpx -l subdomains.txt -status-code -title
-3 httpx -l subdomains.txt -tech-detect
-4 httpx -l subdomains.txt -screenshot -o screenshots
-5 httpx -l subdomains.txt -probe -c 50
-6 httpx -l subdomains.txt -fr -sr -mc 200,301,302,403`;
-    
-    document.getElementById('http-probing-commands').textContent = commands;
+function updateAmass(domain) {
+    document.getElementById('amass-commands').textContent =
+`amass enum -passive -d ${domain}
+amass enum -active -d ${domain}`;
 }
 
-function updateUrlCollectionCommands(domain) {
-    const commands = `1 waybackurls ${domain}
-2 gau ${domain}
-3 katana -u https://${domain} -d 5
-4 hakrawler -url https://${domain} -depth 3
-5 gospider -s https://${domain} -d 5
-6 waybackurls ${domain} | grep "?"
-7 gau ${domain} --threads 5
-8 katana -u https://${domain} -js-crawl`;
-    
-    document.getElementById('url-collection-commands').textContent = commands;
+function updateAssetfinder(domain) {
+    document.getElementById('assetfinder-commands').textContent =
+`assetfinder --subs-only ${domain}`;
 }
 
-function updateJsReconCommands(domain) {
-    const commands = `1 subjs -i subdomains.txt
-2 katana -u https://${domain} -js-crawl
-3 gospider -s https://${domain} -c 10 -d 3
-4 httpx -l subdomains.txt | grep -E "\\.js$"
-5 python3 linkfinder.py -i https://${domain}/app.js
-6 python3 SecretFinder.py -i https://${domain}/app.js
-7 nuclei -l js-files.txt -t exposures/tokens/`;
-    
-    document.getElementById('js-recon-commands').textContent = commands;
+function updateFindomain(domain) {
+    document.getElementById('findomain-commands').textContent =
+`findomain -t ${domain}`;
 }
 
-function updateParamDiscoveryCommands(domain) {
-    const commands = `1 paramspider -d ${domain}
-2 arjun -u https://${domain}/endpoint
-3 x8 -u https://${domain}/endpoint -w params.txt
-4 waybackurls ${domain} | grep "?" | unfurl keys
-5 gau ${domain} | grep "=" | qsreplace test
-6 ffuf -u https://${domain}/endpoint?FUZZ=test -w params.txt`;
-    
-    document.getElementById('param-discovery-commands').textContent = commands;
+function updateChaos(domain) {
+    document.getElementById('chaos-commands').textContent =
+`chaos -d ${domain}`;
 }
 
-function updateVulnScanningCommands(domain) {
-    const commands = `1 nuclei -l live-hosts.txt -t cves/
-2 nuclei -l live-hosts.txt -t vulnerabilities/
-3 nuclei -l live-hosts.txt -t exposures/
-4 nuclei -l live-hosts.txt -t misconfiguration/
-5 nuclei -l live-hosts.txt -t takeovers/
-6 nuclei -u https://${domain} -as
-7 nikto -h https://${domain}`;
-    
-    document.getElementById('vuln-scanning-commands').textContent = commands;
+function updateCrt(domain) {
+    document.getElementById('crt-commands').textContent =
+`curl https://crt.sh/?q=%25.${domain}`;
+}
+
+function updateHttpx(domain) {
+    document.getElementById('httpx-commands').textContent =
+`httpx -l subs.txt -title -tech-detect
+httpx -l subs.txt -status-code
+httpx -l subs.txt -probe`;
+}
+
+function updateUrlCollection(domain) {
+    document.getElementById('url-commands').textContent =
+`gau ${domain}
+waybackurls ${domain}
+katana -u https://${domain}`;
+}
+
+function updateJs(domain) {
+    document.getElementById('js-commands').textContent =
+`subjs
+linkfinder.py -i https://${domain} -o cli`;
+}
+
+function updateParams(domain) {
+    document.getElementById('param-commands').textContent =
+`paramspider -d ${domain}
+arjun -u https://${domain}/api`;
+}
+
+function updateNuclei(domain) {
+    document.getElementById('nuclei-commands').textContent =
+`nuclei -l urls.txt -severity critical,high`;
 }
 
 /**
  * Copy individual card commands
  */
 function copyCardCommands(cardId) {
-    const commandText = document.getElementById(cardId).textContent;
-    
-    navigator.clipboard.writeText(commandText).then(() => {
-        const card = document.getElementById(cardId).closest('.command-card');
-        const button = card.querySelector('.copy-btn');
-        
-        const originalText = button.textContent;
-        button.textContent = '✓ Copied';
-        button.style.background = '#00ff41';
-        button.style.color = '#000';
-        
-        setTimeout(() => {
-            button.textContent = originalText;
-            button.style.background = '';
-            button.style.color = '';
-        }, 2000);
-    }).catch(err => {
-        console.error('Copy failed:', err);
-    });
+    const target = document.getElementById(cardId);
+    if (!target) return;
+    const commandText = target.textContent;
+    const button = target.parentElement.querySelector('.copy-btn');
+
+    copyToClipboard(commandText, button || target);
 }
 
 /**
  * Copy all commands from all cards
  */
 function copyAllCommands() {
-    const allCards = document.querySelectorAll('.command-list');
-    let allCommands = '';
-    
-    allCards.forEach((card, index) => {
-        if (index > 0) allCommands += '\n\n';
-        allCommands += card.textContent;
-    });
-    
-    navigator.clipboard.writeText(allCommands).then(() => {
-        const button = document.querySelector('.copy-all-btn');
-        const originalText = button.textContent;
-        button.textContent = '✓ All Copied';
-        button.style.background = '#00ff41';
-        
-        setTimeout(() => {
-            button.textContent = originalText;
-            button.style.background = '';
-        }, 2000);
-    }).catch(err => {
-        console.error('Copy failed:', err);
-        // Show error feedback
-        const button = document.querySelector('.copy-all-btn');
-        const originalText = button.textContent;
-        button.textContent = '✗ Copy Failed';
-        button.style.background = '#ff3860';
-        
-        setTimeout(() => {
-            button.textContent = originalText;
-            button.style.background = '';
-        }, 2000);
-    });
+    const allCards = document.querySelectorAll('.command-block');
+    const allCommands = Array.from(allCards).map(c => c.textContent).join('\n\n');
+    const button = document.querySelector('.copy-all-btn');
+    copyToClipboard(allCommands, button || document.body);
 }
 
 // ==================== END NEW TOOLS PAGE FUNCTIONS ====================
