@@ -27,122 +27,92 @@
         </div>
     </nav>
 
-    <div class="container">
-        <h1 style="color: var(--accent-green); font-size: 2.5rem; margin: 30px 0 15px;">🛠️ Bug Bounty Tools</h1>
-        <p style="color: var(--text-secondary); margin-bottom: 40px; font-size: 1.1rem;">
-            Interactive frontend tools to streamline your bug bounty workflow
-        </p>
-
-        <!-- Tool 1: Domain Variant Generator -->
-        <section class="section">
-            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🌐 Domain Variant Generator</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px;">
-                Generate common domain variants for testing including subdomains, protocols, and variations.
-            </p>
-            
-            <div class="form-group">
-                <label class="form-label" for="domain-input">Enter Domain:</label>
-                <input 
-                    type="text" 
-                    id="domain-input" 
-                    class="form-input" 
-                    placeholder="example.com"
-                >
+    <main class="tools-container">
+        <div class="tools-header">
+            <h1>🛠️ Security Toolkit</h1>
+            <p class="subtitle">Professional bug bounty command center</p>
+        </div>
+        
+        <div class="tools-grid">
+            <!-- Tool Card 1: Bug Bounty Command Generator -->
+            <div class="tool-card" id="tool-command-gen">
+                <div class="tool-header">
+                    <h3 class="tool-title">⚡ Bug Bounty Command Generator</h3>
+                    <p class="tool-description">Generate comprehensive reconnaissance commands and domain variants for your target.</p>
+                </div>
+                <div class="tool-input">
+                    <input type="text" id="input-command-gen" class="tool-input-field" placeholder="example.com" aria-label="Domain name input for bug bounty command generator">
+                </div>
+                <button class="tool-generate-btn" onclick="generateBugBountyCommands()">Generate</button>
+                <div class="tool-output" id="output-command-gen"></div>
             </div>
             
-            <button class="btn btn-primary" onclick="generateDomainVariants()">
-                Generate Variants
-            </button>
-            
-            <div id="domain-output" class="tool-output" style="display: none;"></div>
-        </section>
-
-        <!-- Tool 2: Bug Bounty Command Generator -->
-        <section class="section">
-            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">⚡ Bug Bounty Command Generator</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px;">
-                Generate common bug bounty reconnaissance and testing commands. These are templates - customize for your needs.
-            </p>
-            
-            <div class="form-group">
-                <label class="form-label" for="command-domain-input">Enter Domain:</label>
-                <input 
-                    type="text" 
-                    id="command-domain-input" 
-                    class="form-input" 
-                    placeholder="example.com"
-                >
+            <!-- Tool Card 2: Subdomain Recon Toolkit -->
+            <div class="tool-card" id="tool-subdomain">
+                <div class="tool-header">
+                    <h3 class="tool-title">🔍 Subdomain Recon Toolkit</h3>
+                    <p class="tool-description">Specialized subdomain discovery command generator.</p>
+                </div>
+                <div class="tool-input">
+                    <input type="text" id="input-subdomain" class="tool-input-field" placeholder="example.com" aria-label="Domain name input for subdomain recon toolkit">
+                </div>
+                <button class="tool-generate-btn" onclick="generateSubdomainCommands()">Generate</button>
+                <div class="tool-output" id="output-subdomain"></div>
             </div>
             
-            <button class="btn btn-primary" onclick="generateCommands()">
-                Generate Commands
-            </button>
-            
-            <div id="command-output" class="tool-output" style="display: none;"></div>
-            
-            <div class="info-box" style="margin-top: 20px;">
-                <h4>📝 Note</h4>
-                <p>
-                    These commands are generated as text templates for reference. They are NOT executed automatically.
-                    Always review and customize commands before running them in your environment.
-                </p>
-            </div>
-        </section>
-
-        <!-- Tool 3: Payload Encoder/Decoder -->
-        <section class="section">
-            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🔐 Payload Encoder/Decoder</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px;">
-                Encode and decode payloads for bypass techniques and testing.
-            </p>
-            
-            <div class="form-group">
-                <label class="form-label" for="encoder-input">Input:</label>
-                <textarea 
-                    id="encoder-input" 
-                    class="form-textarea" 
-                    placeholder="Enter text to encode/decode"
-                    rows="4"
-                ></textarea>
+            <!-- Tool Card 3: URL Collection Toolkit -->
+            <div class="tool-card" id="tool-urls">
+                <div class="tool-header">
+                    <h3 class="tool-title">🌐 URL Collection Toolkit</h3>
+                    <p class="tool-description">Aggregate URLs from multiple sources for deeper reconnaissance.</p>
+                </div>
+                <div class="tool-input">
+                    <input type="text" id="input-urls" class="tool-input-field" placeholder="example.com" aria-label="Domain name input for URL collection toolkit">
+                </div>
+                <button class="tool-generate-btn" onclick="generateUrlCommands()">Generate</button>
+                <div class="tool-output" id="output-urls"></div>
             </div>
             
-            <div style="margin-bottom: 20px;">
-                <button class="btn btn-secondary" onclick="encodePayload('base64')">Base64 Encode</button>
-                <button class="btn btn-secondary" onclick="decodePayload('base64')">Base64 Decode</button>
-                <button class="btn btn-secondary" onclick="encodePayload('url')">URL Encode</button>
-                <button class="btn btn-secondary" onclick="decodePayload('url')">URL Decode</button>
-                <button class="btn btn-secondary" onclick="encodePayload('html')">HTML Encode</button>
-                <button class="btn btn-secondary" onclick="decodePayload('html')">HTML Decode</button>
+            <!-- Tool Card 4: Parameter Discovery -->
+            <div class="tool-card" id="tool-params">
+                <div class="tool-header">
+                    <h3 class="tool-title">🧠 Parameter Discovery</h3>
+                    <p class="tool-description">Find hidden parameters and test for parameter-based vulnerabilities.</p>
+                </div>
+                <div class="tool-input">
+                    <input type="text" id="input-params" class="tool-input-field" placeholder="example.com or URL" aria-label="Domain or URL input for parameter discovery">
+                </div>
+                <button class="tool-generate-btn" onclick="generateParamCommands()">Generate</button>
+                <div class="tool-output" id="output-params"></div>
             </div>
             
-            <div class="form-group">
-                <label class="form-label" for="encoder-output">Output:</label>
-                <textarea 
-                    id="encoder-output" 
-                    class="form-textarea" 
-                    placeholder="Encoded/decoded output will appear here"
-                    rows="4"
-                    readonly
-                ></textarea>
+            <!-- Tool Card 5: API Recon Toolkit -->
+            <div class="tool-card" id="tool-api">
+                <div class="tool-header">
+                    <h3 class="tool-title">🔐 API Recon Toolkit</h3>
+                    <p class="tool-description">Discover and enumerate API endpoints and generate test requests.</p>
+                </div>
+                <div class="tool-input">
+                    <input type="text" id="input-api" class="tool-input-field" placeholder="example.com" aria-label="Domain name input for API recon toolkit">
+                </div>
+                <button class="tool-generate-btn" onclick="generateApiCommands()">Generate</button>
+                <div class="tool-output" id="output-api"></div>
             </div>
-        </section>
-
-        <!-- Additional Tools Info -->
-        <section class="info-box">
-            <h4>💡 Using These Tools</h4>
-            <p style="margin-bottom: 10px;">
-                These tools are designed to help streamline your bug bounty workflow:
-            </p>
-            <ul style="margin-left: 20px; line-height: 1.8;">
-                <li><strong>Domain Generator:</strong> Quickly enumerate potential target URLs for testing</li>
-                <li><strong>Command Generator:</strong> Get started faster with pre-configured reconnaissance commands</li>
-                <li><strong>Encoder/Decoder:</strong> Modify payloads to bypass filters and test different encodings</li>
-            </ul>
-            <p style="margin-top: 15px;">
-                All tools run entirely in your browser - no data is sent to any server.
-            </p>
-        </section>
-    </div>
+            
+            <!-- Tool Card 6: JS Recon Toolkit -->
+            <div class="tool-card" id="tool-js">
+                <div class="tool-header">
+                    <h3 class="tool-title">⚙️ JS Recon Toolkit</h3>
+                    <p class="tool-description">Extract and analyze JavaScript files for endpoints, secrets, and logic flaws.</p>
+                </div>
+                <div class="tool-input">
+                    <input type="text" id="input-js" class="tool-input-field" placeholder="example.com" aria-label="Domain name input for JavaScript recon toolkit">
+                </div>
+                <button class="tool-generate-btn" onclick="generateJsCommands()">Generate</button>
+                <div class="tool-output" id="output-js"></div>
+            </div>
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -152,23 +122,5 @@
     </footer>
 
     <script src="js/main.js"></script>
-    <script>
-        // Show output divs when content is generated
-        document.addEventListener('DOMContentLoaded', function() {
-            const domainOutput = document.getElementById('domain-output');
-            const commandOutput = document.getElementById('command-output');
-            
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.target.innerHTML !== '') {
-                        mutation.target.style.display = 'block';
-                    }
-                });
-            });
-            
-            if (domainOutput) observer.observe(domainOutput, { childList: true, subtree: true });
-            if (commandOutput) observer.observe(commandOutput, { childList: true, subtree: true });
-        });
-    </script>
 </body>
 </html>
