@@ -27,128 +27,106 @@
         </div>
     </nav>
 
-    <main class="tools-page">
-        <!-- Domain Input Section -->
-        <div class="domain-input-section">
-            <input type="text" 
-                   id="domain-input" 
+    <main class="tools-page console-page">
+        <div class="console-header">
+            <input type="text"
+                   id="domain-input"
                    placeholder="example.com"
+                   value="example.com"
                    class="domain-input">
             <button onclick="generateAllCommands()" class="generate-btn">
-                Generate Commands
+                Generate
             </button>
         </div>
-        
-        <!-- Command Cards Grid -->
-        <div class="tools-grid">
-            <!-- Card 1: Recon Commands -->
-            <div class="command-card">
+
+        <div id="tool-cards" class="tool-cards">
+            <section class="tool-card">
                 <div class="card-header">
-                    <h3 class="card-title">Recon Commands</h3>
-                    <button onclick="copyCardCommands('recon-commands')" class="copy-btn">
-                        Copy All
-                    </button>
+                    <strong>Subfinder</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('subfinder-commands')">Copy</button>
                 </div>
-                <div class="command-list" id="recon-commands">1 subfinder -d example.com -all -recursive
-2 amass enum -passive -d example.com
-3 assetfinder --subs-only example.com
-4 findomain -t example.com
-5 chaos -d example.com
-6 crt.sh example.com
-7 shosubgo -d example.com -s shodan-api-key
-8 subfinder -d example.com | httpx -silent</div>
-            </div>
-            
-            <!-- Card 2: HTTP Probing -->
-            <div class="command-card">
+                <pre id="subfinder-commands" class="command-block"></pre>
+            </section>
+
+            <section class="tool-card">
                 <div class="card-header">
-                    <h3 class="card-title">HTTP Probing</h3>
-                    <button onclick="copyCardCommands('http-probing-commands')" class="copy-btn">
-                        Copy All
-                    </button>
+                    <strong>Amass</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('amass-commands')">Copy</button>
                 </div>
-                <div class="command-list" id="http-probing-commands">1 httpx -l subdomains.txt -o live-hosts.txt
-2 httpx -l subdomains.txt -status-code -title
-3 httpx -l subdomains.txt -tech-detect
-4 httpx -l subdomains.txt -screenshot -o screenshots
-5 httpx -l subdomains.txt -probe -c 50
-6 httpx -l subdomains.txt -fr -sr -mc 200,301,302,403</div>
-            </div>
-            
-            <!-- Card 3: URL Collection -->
-            <div class="command-card">
+                <pre id="amass-commands" class="command-block"></pre>
+            </section>
+
+            <section class="tool-card">
                 <div class="card-header">
-                    <h3 class="card-title">URL Collection</h3>
-                    <button onclick="copyCardCommands('url-collection-commands')" class="copy-btn">
-                        Copy All
-                    </button>
+                    <strong>Assetfinder</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('assetfinder-commands')">Copy</button>
                 </div>
-                <div class="command-list" id="url-collection-commands">1 waybackurls example.com
-2 gau example.com
-3 katana -u https://example.com -d 5
-4 hakrawler -url https://example.com -depth 3
-5 gospider -s https://example.com -d 5
-6 waybackurls example.com | grep "?"
-7 gau example.com --threads 5
-8 katana -u https://example.com -js-crawl</div>
-            </div>
-            
-            <!-- Card 4: JavaScript Recon -->
-            <div class="command-card">
+                <pre id="assetfinder-commands" class="command-block"></pre>
+            </section>
+
+            <section class="tool-card">
                 <div class="card-header">
-                    <h3 class="card-title">JavaScript Recon</h3>
-                    <button onclick="copyCardCommands('js-recon-commands')" class="copy-btn">
-                        Copy All
-                    </button>
+                    <strong>Findomain</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('findomain-commands')">Copy</button>
                 </div>
-                <div class="command-list" id="js-recon-commands">1 subjs -i subdomains.txt
-2 katana -u https://example.com -js-crawl
-3 gospider -s https://example.com -c 10 -d 3
-4 httpx -l subdomains.txt | grep -E "\.js$"
-5 python3 linkfinder.py -i https://example.com/app.js
-6 python3 SecretFinder.py -i https://example.com/app.js
-7 nuclei -l js-files.txt -t exposures/tokens/</div>
-            </div>
-            
-            <!-- Card 5: Parameter Discovery -->
-            <div class="command-card">
+                <pre id="findomain-commands" class="command-block"></pre>
+            </section>
+
+            <section class="tool-card">
                 <div class="card-header">
-                    <h3 class="card-title">Parameter Discovery</h3>
-                    <button onclick="copyCardCommands('param-discovery-commands')" class="copy-btn">
-                        Copy All
-                    </button>
+                    <strong>Chaos</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('chaos-commands')">Copy</button>
                 </div>
-                <div class="command-list" id="param-discovery-commands">1 paramspider -d example.com
-2 arjun -u https://example.com/endpoint
-3 x8 -u https://example.com/endpoint -w params.txt
-4 waybackurls example.com | grep "?" | unfurl keys
-5 gau example.com | grep "=" | qsreplace test
-6 ffuf -u https://example.com/endpoint?FUZZ=test -w params.txt</div>
-            </div>
-            
-            <!-- Card 6: Vulnerability Scanning -->
-            <div class="command-card">
+                <pre id="chaos-commands" class="command-block"></pre>
+            </section>
+
+            <section class="tool-card">
                 <div class="card-header">
-                    <h3 class="card-title">Vulnerability Scanning</h3>
-                    <button onclick="copyCardCommands('vuln-scanning-commands')" class="copy-btn">
-                        Copy All
-                    </button>
+                    <strong>CRT.sh</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('crt-commands')">Copy</button>
                 </div>
-                <div class="command-list" id="vuln-scanning-commands">1 nuclei -l live-hosts.txt -t cves/
-2 nuclei -l live-hosts.txt -t vulnerabilities/
-3 nuclei -l live-hosts.txt -t exposures/
-4 nuclei -l live-hosts.txt -t misconfiguration/
-5 nuclei -l live-hosts.txt -t takeovers/
-6 nuclei -u https://example.com -as
-7 nikto -h https://example.com</div>
-            </div>
-        </div>
-        
-        <!-- Global Copy All Button -->
-        <div class="global-actions">
-            <button onclick="copyAllCommands()" class="copy-all-btn">
-                Copy All Commands
-            </button>
+                <pre id="crt-commands" class="command-block"></pre>
+            </section>
+
+            <section class="tool-card">
+                <div class="card-header">
+                    <strong>HTTPX</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('httpx-commands')">Copy</button>
+                </div>
+                <pre id="httpx-commands" class="command-block"></pre>
+            </section>
+
+            <section class="tool-card">
+                <div class="card-header">
+                    <strong>URL Collection</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('url-commands')">Copy</button>
+                </div>
+                <pre id="url-commands" class="command-block"></pre>
+            </section>
+
+            <section class="tool-card">
+                <div class="card-header">
+                    <strong>JavaScript Recon</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('js-commands')">Copy</button>
+                </div>
+                <pre id="js-commands" class="command-block"></pre>
+            </section>
+
+            <section class="tool-card">
+                <div class="card-header">
+                    <strong>Parameter Discovery</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('param-commands')">Copy</button>
+                </div>
+                <pre id="param-commands" class="command-block"></pre>
+            </section>
+
+            <section class="tool-card">
+                <div class="card-header">
+                    <strong>Nuclei</strong>
+                    <button class="copy-btn" onclick="copyCardCommands('nuclei-commands')">Copy</button>
+                </div>
+                <pre id="nuclei-commands" class="command-block"></pre>
+            </section>
         </div>
     </main>
 

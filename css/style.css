@@ -838,145 +838,101 @@ html {
 
 /* Tools Page Grid Layout */
 .tools-page {
-    max-width: 1400px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* Domain Input Section */
-.domain-input-section {
+.console-page .console-header {
     display: flex;
-    justify-content: center;
-    align-items: center;
     gap: 12px;
-    padding: 32px 24px;
-    max-width: 600px;
-    margin: 0 auto;
+    align-items: center;
+    padding: 20px 0 12px;
 }
 
-.domain-input {
+.console-page .domain-input {
     flex: 1;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     color: var(--text-primary);
     padding: 12px 16px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 16px;
     font-family: 'Fira Code', monospace;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.domain-input:focus {
+.console-page .domain-input:focus {
     outline: none;
     border-color: var(--accent-green);
     box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.1);
 }
 
-.domain-input::placeholder {
-    color: var(--text-secondary);
-    opacity: 0.6;
-}
-
-.generate-btn {
-    background: var(--accent-green);
+.console-page .generate-btn {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
     color: #000;
     border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
+    box-shadow: 0 8px 24px rgba(0, 217, 255, 0.25);
 }
 
-.generate-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 16px rgba(0, 255, 65, 0.3);
+.console-page .generate-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(0, 217, 255, 0.35);
 }
 
-/* Command Cards Grid */
-.tools-grid {
-    display: grid;
-    gap: 24px;
-    padding: 24px;
+.tool-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 20px;
 }
 
-/* Desktop: 3 columns */
-@media (min-width: 1024px) {
-    .tools-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Tablet: 2 columns */
-@media (min-width: 768px) and (max-width: 1023px) {
-    .tools-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Mobile: 1 column */
-@media (max-width: 767px) {
-    .tools-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Command Card Styling */
-.command-card {
+.tool-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 0;
-    transition: border-color 0.3s ease;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.25), 0 0 8px rgba(0, 217, 255, 0.12);
 }
 
-.command-card:hover {
-    border-color: var(--accent-green);
-}
-
-.card-header {
+.tool-card .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.card-title {
-    font-size: 16px;
-    font-weight: 600;
+    margin-bottom: 10px;
     color: var(--text-primary);
-    margin: 0;
 }
 
-.copy-btn {
-    background: transparent;
-    border: 1px solid var(--accent-green);
-    color: var(--accent-green);
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
+.tool-card .command-block {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    color: var(--accent-cyan);
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.tool-card .copy-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.copy-btn:hover {
-    background: var(--accent-green);
-    color: #000;
-}
-
-/* Command List Display */
-.command-list {
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: 14px;
-    line-height: 1.8;
-    color: #e6edf3;
-    background: #0d1117;
-    padding: 20px;
-    border-radius: 0 0 6px 6px;
-    border: none;
-    white-space: pre-line;
+.tool-card .copy-btn:hover {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
 }
 
 /* Global Actions */
