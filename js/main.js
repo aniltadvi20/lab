@@ -839,14 +839,30 @@ document.addEventListener('DOMContentLoaded', function() {
  * Generate all commands - Main function for new tools page
  */
 function generateAllCommands() {
-    const domainInput = document.getElementById('domain-input').value.trim();
+    const domainInputEl = document.getElementById('domain-input');
+    const domainInput = domainInputEl.value.trim();
     
     if (!domainInput) {
-        alert('Please enter a domain');
+        // Visual feedback instead of alert
+        domainInputEl.style.borderColor = '#ff3860';
+        domainInputEl.focus();
+        setTimeout(() => {
+            domainInputEl.style.borderColor = '';
+        }, 2000);
         return;
     }
     
     const domain = parseDomain(domainInput);
+    
+    // Validate parsed domain is not empty
+    if (!domain) {
+        domainInputEl.style.borderColor = '#ff3860';
+        domainInputEl.focus();
+        setTimeout(() => {
+            domainInputEl.style.borderColor = '';
+        }, 2000);
+        return;
+    }
     
     updateReconCommands(domain);
     updateHttpProbingCommands(domain);
@@ -973,6 +989,18 @@ function copyAllCommands() {
         const originalText = button.textContent;
         button.textContent = '✓ All Copied';
         button.style.background = '#00ff41';
+        
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.style.background = '';
+        }, 2000);
+    }).catch(err => {
+        console.error('Copy failed:', err);
+        // Show error feedback
+        const button = document.querySelector('.copy-all-btn');
+        const originalText = button.textContent;
+        button.textContent = '✗ Copy Failed';
+        button.style.background = '#ff3860';
         
         setTimeout(() => {
             button.textContent = originalText;
