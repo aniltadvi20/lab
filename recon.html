@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recon Knowledge Base | Command Center</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">⚡ BB Command Center</a>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="tools.html" class="nav-link">Tools</a></li>
+                <li class="nav-item"><a href="payloads.html" class="nav-link">Payloads</a></li>
+                <li class="nav-item"><a href="methodology.html" class="nav-link">Methodologies</a></li>
+                <li class="nav-item"><a href="recon.html" class="nav-link">Recon</a></li>
+                <li class="nav-item"><a href="notes.html" class="nav-link">Notes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="color: var(--accent-green); font-size: 2.5rem; margin: 30px 0 15px;">🔭 Reconnaissance Knowledge Base</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 40px; font-size: 1.1rem;">
+            Master the art of information gathering with these proven reconnaissance strategies and techniques
+        </p>
+
+        <!-- Subdomain Discovery -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🌐 Subdomain Discovery Strategy</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                Subdomain enumeration is the foundation of bug bounty recon. Find forgotten, staging, 
+                and development subdomains that often have weaker security controls.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Passive Enumeration</h3>
+            <div class="code-block">
+                <code># Multiple tools for comprehensive coverage
+subfinder -d target.com -all -recursive -o subdomains.txt
+assetfinder --subs-only target.com >> subdomains.txt
+amass enum -passive -d target.com -o amass-subs.txt
+
+# Certificate Transparency
+curl -s "https://crt.sh/?q=%25.target.com&output=json" | jq -r '.[].name_value' | sort -u
+
+# Using APIs
+curl -s "https://api.securitytrails.com/v1/domain/target.com/subdomains" \
+  -H "APIKEY: YOUR_KEY" | jq -r '.subdomains[]' | sed 's/$/.target.com/'
+
+# Subdomain aggregator
+chaos -d target.com -silent</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Active Enumeration</h3>
+            <div class="code-block">
+                <code># DNS brute forcing
+puredns bruteforce wordlist.txt target.com -r resolvers.txt
+shuffledns -d target.com -w wordlist.txt -r resolvers.txt
+
+# Permutation scanning
+altdns -i subdomains.txt -o permutations.txt -w words.txt
+dnsgen subdomains.txt | massdns -r resolvers.txt -o S
+
+# Active Amass scan
+amass enum -active -d target.com -brute -w wordlist.txt</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Verification & Probing</h3>
+            <div class="code-block">
+                <code># Check which subdomains are alive
+httpx -l subdomains.txt -silent -o live-hosts.txt
+
+# Get more details
+httpx -l subdomains.txt -title -status-code -tech-detect -o detailed.txt
+
+# Screenshot alive hosts
+gowitness file -f live-hosts.txt -P screenshots/</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Pro Tips</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li>Use multiple tools - each finds unique subdomains</li>
+                <li>Monitor continuously - new subdomains appear regularly</li>
+                <li>Check for wildcard DNS to avoid false positives</li>
+                <li>Look for patterns in naming conventions</li>
+                <li>Don't ignore "dead" subdomains - check DNS history</li>
+            </ul>
+        </section>
+
+        <!-- JavaScript File Hunting -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">📜 JavaScript File Hunting</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                JavaScript files are goldmines for bug bounty hunters - they contain API endpoints, 
+                authentication logic, and sometimes even hardcoded secrets.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Finding JS Files</h3>
+            <div class="code-block">
+                <code># Extract all JS files from domains
+subjs -i domains.txt -o js-files.txt
+
+# Using crawlers
+katana -u https://target.com -js-crawl -d 5 -jc | grep -E "\.js$" > js-files.txt
+gospider -s https://target.com -c 10 -d 3 --js
+
+# From Wayback Machine
+waybackurls target.com | grep -E "\.js$" | sort -u > wayback-js.txt
+
+# Using GitHub
+python3 github-search.py -t TARGET -e js</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Analyzing JavaScript</h3>
+            <div class="code-block">
+                <code># Find endpoints and URLs
+python3 linkfinder.py -i https://target.com/app.js -o results.html
+
+# Extract secrets and sensitive data
+trufflehog git https://github.com/target/repo --json
+gitleaks detect --source . -v
+
+# Search for specific patterns
+grep -r "api_key" js-files/
+grep -r "secret" js-files/
+grep -r "password" js-files/
+grep -r "token" js-files/
+
+# Pretty print and analyze
+js-beautify uglified.js > readable.js
+
+# Extract API endpoints
+cat app.js | grep -oP '(?<=")[a-zA-Z0-9_/\-\.]*(?=")' | grep -E "^/api/"</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">What to Look For</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li><strong>API endpoints:</strong> Hidden or undocumented API routes</li>
+                <li><strong>Access tokens:</strong> Hardcoded auth tokens or API keys</li>
+                <li><strong>Internal URLs:</strong> Development or staging environment URLs</li>
+                <li><strong>S3 buckets:</strong> AWS bucket names and paths</li>
+                <li><strong>Version info:</strong> Library versions with known vulnerabilities</li>
+                <li><strong>Comments:</strong> Developer notes that reveal logic</li>
+                <li><strong>Debug code:</strong> Test functions left in production</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Automation Script</h3>
+            <div class="code-block">
+                <code>#!/bin/bash
+# js-recon.sh - Automated JavaScript reconnaissance
+
+domain=$1
+mkdir -p js-output
+
+echo "[+] Finding JS files..."
+subjs -i $domain | tee js-output/js-files.txt
+
+echo "[+] Downloading JS files..."
+cat js-output/js-files.txt | while read url; do
+    wget -q -P js-output/files/ "$url"
+done
+
+echo "[+] Extracting endpoints..."
+for file in js-output/files/*.js; do
+    python3 linkfinder.py -i "$file" -o js-output/endpoints.txt
+done
+
+echo "[+] Searching for secrets..."
+grep -rE "(api_key|apikey|secret|token|password)" js-output/files/ > js-output/secrets.txt
+
+echo "[+] Done! Check js-output/ directory"</code>
+            </div>
+        </section>
+
+        <!-- Parameter Discovery -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🔑 Parameter Discovery</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                Hidden parameters can unlock new attack surfaces. Many bugs exist in undocumented 
+                or deprecated parameters that developers forgot to remove.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Parameter Enumeration</h3>
+            <div class="code-block">
+                <code># Automated parameter discovery
+paramspider -d target.com --output params.txt
+arjun -u https://target.com/page -o params.json
+
+# From Wayback URLs
+waybackurls target.com | unfurl keys | sort -u > parameters.txt
+
+# Using wordlists
+ffuf -u https://target.com/page?FUZZ=test -w parameters.txt -mc all
+
+# Bulk parameter testing
+x8 -u "https://target.com/api/user" -w params.txt
+
+# Param miner (Burp extension) for automatic discovery</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Testing Hidden Parameters</h3>
+            <div class="code-block">
+                <code># Test for debug parameters
+debug=true
+debug=1
+test=1
+dev=true
+admin=true
+
+# Common parameter names to test
+id
+user_id
+userId
+uid
+email
+username
+token
+key
+secret
+callback
+redirect
+url
+next
+return
+
+# HTTP Parameter Pollution
+?id=123&id=456
+?user=test&user=admin</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Parameter Analysis Strategy</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li>Extract parameters from all historical URLs (Wayback, CommonCrawl)</li>
+                <li>Test each parameter with different data types (int, string, array, object)</li>
+                <li>Look for inconsistent parameter validation</li>
+                <li>Test parameters in different HTTP methods (GET, POST, PUT)</li>
+                <li>Try parameter pollution and array notation</li>
+                <li>Check for mass assignment vulnerabilities</li>
+            </ul>
+        </section>
+
+        <!-- API Reconnaissance -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🔌 API Reconnaissance</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                APIs are often less protected than web interfaces. Thorough API recon reveals 
+                business logic, authentication weaknesses, and IDOR opportunities.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Finding APIs</h3>
+            <div class="code-block">
+                <code># Common API paths
+https://target.com/api/
+https://target.com/api/v1/
+https://target.com/api/v2/
+https://api.target.com/
+https://target.com/rest/
+https://target.com/graphql
+
+# API endpoint discovery
+kiterunner scan https://target.com -w routes-large.kite
+ffuf -u https://target.com/api/v1/FUZZ -w api-endpoints.txt
+
+# Mobile API discovery (from APK/IPA)
+apktool d app.apk
+grep -r "http" app/ | grep "api"
+
+# GraphQL discovery
+https://target.com/graphql
+https://target.com/graphiql
+https://target.com/v1/graphql</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">API Enumeration</h3>
+            <div class="code-block">
+                <code># GraphQL introspection
+curl -X POST https://target.com/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{__schema{types{name,fields{name}}}}"}'
+
+# REST API exploration
+curl -X OPTIONS https://target.com/api/endpoint
+curl -H "Accept: application/json" https://target.com/api/
+
+# Swagger/OpenAPI documentation
+https://target.com/swagger.json
+https://target.com/api-docs
+https://target.com/docs
+https://target.com/openapi.json
+
+# API versioning check
+/api/v1/
+/api/v2/
+/api/v3/
+/v1/
+/v2/</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">API Testing Checklist</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li>Test all HTTP methods (GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS)</li>
+                <li>Check for authentication on every endpoint</li>
+                <li>Test authorization - can you access other users' data?</li>
+                <li>Look for excessive data exposure in responses</li>
+                <li>Test rate limiting and API abuse scenarios</li>
+                <li>Check for mass assignment vulnerabilities</li>
+                <li>Test API versioning - are old versions still accessible?</li>
+                <li>Look for debug endpoints or test APIs in production</li>
+            </ul>
+        </section>
+
+        <!-- Wayback Machine Analysis -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">⏮️ Wayback Machine Analysis</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                Historical data reveals old endpoints, forgotten features, and parameter changes 
+                that might still be exploitable.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Gathering Historical URLs</h3>
+            <div class="code-block">
+                <code># Get all URLs from Wayback Machine
+waybackurls target.com | tee wayback-urls.txt
+
+# Alternative tools
+gau target.com | tee gau-urls.txt
+echo target.com | gauplus > urls.txt
+
+# Filter by extension
+waybackurls target.com | grep -E "\.(js|json|xml|txt|log|bak)$"
+
+# Filter by keyword
+waybackurls target.com | grep -i "api"
+waybackurls target.com | grep -i "admin"
+waybackurls target.com | grep -i "config"</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Analyzing Historical Data</h3>
+            <div class="code-block">
+                <code># Find juicy files
+waybackurls target.com | grep -E "\.(sql|db|backup|bak|old|zip)$"
+
+# Extract all parameters
+waybackurls target.com | unfurl keys | sort -u
+
+# Compare current vs historical endpoints
+diff <(sort current-urls.txt) <(sort wayback-urls.txt)
+
+# Look for sensitive paths
+waybackurls target.com | grep -iE "(admin|config|backup|test|dev|staging)"
+
+# Find old API versions
+waybackurls target.com | grep -E "/(v[0-9]|version)/"</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">What to Look For</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li>Removed admin panels or dashboards</li>
+                <li>Old API versions that might still work</li>
+                <li>Backup files (.bak, .old, .backup)</li>
+                <li>Test or development environments</li>
+                <li>Deprecated features with less security</li>
+                <li>Changed authentication mechanisms</li>
+                <li>Parameters that were removed but still processed</li>
+            </ul>
+        </section>
+
+        <!-- Cloud Asset Discovery -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">☁️ Cloud Asset Discovery</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                Companies use cloud services extensively. Misconfigured buckets, storage accounts, 
+                and cloud resources are common sources of critical vulnerabilities.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">S3 Bucket Discovery</h3>
+            <div class="code-block">
+                <code># Find S3 buckets in JavaScript and HTML
+grep -r "s3.amazonaws.com" .
+grep -r "\.s3\." .
+
+# Common bucket naming patterns
+company-name
+company-assets
+company-backups
+company-uploads
+company-prod
+company-dev
+company-staging
+
+# S3 bucket enumeration
+s3scanner scan --buckets-file buckets.txt
+
+# Check bucket permissions
+aws s3 ls s3://bucket-name --no-sign-request
+aws s3 cp test.txt s3://bucket-name/test.txt --no-sign-request</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Azure Blob Storage</h3>
+            <div class="code-block">
+                <code># Azure blob URL patterns
+https://accountname.blob.core.windows.net/
+https://accountname.file.core.windows.net/
+
+# Enumerate containers
+az storage container list --account-name accountname
+
+# Check public access
+curl https://accountname.blob.core.windows.net/containername?restype=container&comp=list</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Google Cloud Storage</h3>
+            <div class="code-block">
+                <code># GCS URL patterns
+https://storage.googleapis.com/bucket-name/
+https://bucket-name.storage.googleapis.com/
+
+# List bucket contents
+curl https://storage.googleapis.com/storage/v1/b/bucket-name/o
+
+# Check for public access
+gsutil ls gs://bucket-name/</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Other Cloud Resources</h3>
+            <div class="code-block">
+                <code># Find cloud resources in DNS
+amass enum -d target.com | grep -E "(aws|azure|cloudfront|s3)"
+
+# CloudFront distributions
+https://d111111abcdef8.cloudfront.net
+
+# DigitalOcean Spaces
+https://bucket-name.region.digitaloceanspaces.com
+
+# Check for exposed databases
+shodan search "org:target.com mongodb"
+shodan search "org:target.com elasticsearch"</code>
+            </div>
+        </section>
+
+        <!-- GitHub Reconnaissance -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🐙 GitHub Reconnaissance</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                GitHub repositories often contain leaked credentials, internal tools, and documentation 
+                that reveals system architecture.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Finding Repositories</h3>
+            <div class="code-block">
+                <code># Search GitHub
+site:github.com "company-name"
+site:github.com "target.com"
+
+# Using GitHub Search API
+https://api.github.com/search/repositories?q=target.com
+
+# GitHub dorking
+"target.com" filename:.env
+"target.com" filename:config
+"target.com" extension:pem
+"target.com" extension:key
+"target.com" api_key
+"target.com" password</code>
+            </div>
+
+            <h3 style="color: var(--aspect-green); margin-top: 25px;">Secret Scanning</h3>
+            <div class="code-block">
+                <code># Scan for secrets in repos
+trufflehog git https://github.com/target/repo --json
+gitleaks detect --source . -v
+
+# GitRob for organization scanning
+gitrob target-org
+
+# Search commit history
+git log -p | grep -i "password"
+git log -p | grep -i "api_key"
+
+# Check .git exposure
+wget -r https://target.com/.git/</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">What to Search For</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li>API keys and tokens</li>
+                <li>Database credentials</li>
+                <li>AWS keys and secrets</li>
+                <li>Private keys (RSA, SSH)</li>
+                <li>OAuth tokens</li>
+                <li>JWT secrets</li>
+                <li>Internal documentation</li>
+                <li>Infrastructure as Code (Terraform, CloudFormation)</li>
+            </ul>
+        </section>
+
+        <!-- Google Dorks -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🔍 Google Dorks</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                Google's powerful search operators can reveal exposed files, login pages, 
+                and sensitive information indexed by search engines.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Essential Dorks</h3>
+            <div class="code-block">
+                <code># Find subdomains
+site:*.target.com
+
+# Exclude main domain
+site:*.target.com -www
+
+# Find login pages
+site:target.com inurl:login
+site:target.com inurl:admin
+site:target.com inurl:signin
+
+# Exposed files
+site:target.com ext:sql
+site:target.com ext:log
+site:target.com ext:txt
+site:target.com ext:bak
+site:target.com ext:env
+
+# Configuration files
+site:target.com inurl:config
+site:target.com intitle:"index of" "config"
+
+# Error messages
+site:target.com intext:"sql syntax"
+site:target.com intext:"error"
+site:target.com intext:"warning"</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Advanced Dorks</h3>
+            <div class="code-block">
+                <code># Find API documentation
+site:target.com inurl:api
+site:target.com intitle:"api documentation"
+
+# Exposed admin panels
+site:target.com inurl:wp-admin
+site:target.com inurl:phpmyadmin
+site:target.com inurl:admin/dashboard
+
+# Directory listings
+site:target.com intitle:"index of"
+site:target.com intitle:"directory listing"
+
+# Backup files
+site:target.com inurl:backup
+site:target.com ext:bak
+site:target.com ext:old
+
+# Database dumps
+site:target.com ext:sql
+site:target.com ext:mdb
+
+# Cloud storage
+site:s3.amazonaws.com "target.com"
+site:storage.googleapis.com "target.com"</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Sensitive Information</h3>
+            <div class="code-block">
+                <code># Credentials
+site:target.com intext:"password"
+site:target.com intext:"username"
+site:target.com filetype:env
+
+# API keys
+site:target.com intext:"api_key"
+site:target.com intext:"apikey"
+
+# Email addresses
+site:target.com "@target.com"
+
+# Documents
+site:target.com ext:pdf
+site:target.com ext:doc
+site:target.com ext:xls
+
+# Source code
+site:github.com "target.com"
+site:gitlab.com "target.com"</code>
+            </div>
+        </section>
+
+        <!-- Pro Tips -->
+        <section class="info-box">
+            <h4>💡 Reconnaissance Pro Tips</h4>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>Automate everything:</strong> Build scripts to run recon continuously</li>
+                <li><strong>Monitor for changes:</strong> Set up alerts for new subdomains and URLs</li>
+                <li><strong>Combine techniques:</strong> Don't rely on just one method</li>
+                <li><strong>Document findings:</strong> Keep detailed notes of what you discover</li>
+                <li><strong>Go deep, not wide:</strong> Thorough recon on one target beats surface-level on many</li>
+                <li><strong>Check mobile apps:</strong> They often use different APIs with weaker security</li>
+                <li><strong>Time zones matter:</strong> Developers deploy during business hours - monitor then</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-text">
+            Bug Bounty Command Center | Your Personal Security Research Platform
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

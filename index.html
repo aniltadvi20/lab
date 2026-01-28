@@ -3,138 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bug Bounty Frontend Lab</title>
+    <title>Bug Bounty Command Center</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">⚡ BB Command Center</a>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="tools.html" class="nav-link">Tools</a></li>
+                <li class="nav-item"><a href="payloads.html" class="nav-link">Payloads</a></li>
+                <li class="nav-item"><a href="methodology.html" class="nav-link">Methodologies</a></li>
+                <li class="nav-item"><a href="recon.html" class="nav-link">Recon</a></li>
+                <li class="nav-item"><a href="notes.html" class="nav-link">Notes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Header -->
     <header>
-        <h1>🎯 Bug Bounty Frontend Lab</h1>
-        <h2>Learn Web Security Vulnerabilities Safely</h2>
+        <h1>🎯 Bug Bounty Command Center</h1>
+        <h2>Personal Security Research Platform</h2>
     </header>
 
     <div class="container">
-        <div class="warning-banner">
-            ⚠️ FOR EDUCATIONAL PURPOSES ONLY - DO NOT USE ON REAL SYSTEMS
+        <!-- Hero Section -->
+        <section class="hero">
+            <p class="hero-description">
+                Your centralized hub for bug bounty hunting. Access tools, payloads, methodologies,
+                and recon techniques all in one place. Built by security researchers, for security researchers.
+            </p>
+        </section>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">150+</div>
+                <div class="stat-label">Payloads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Interactive Tools</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Testing Phases</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Bug Bounties</div>
+            </div>
         </div>
 
-        <div class="lab-description">
-            <h3>💡 Welcome to the Bug Bounty Frontend Lab</h3>
-            <p>
-                This is a hands-on learning platform designed to help you understand common web security vulnerabilities
-                in a safe, controlled environment. Each lab demonstrates a real vulnerability that exists in the wild.
-            </p>
-            <p>
-                <strong>Important:</strong> These labs run entirely in your browser with no backend. All vulnerabilities
-                are simulated for educational purposes. Always practice ethical hacking!
-            </p>
-        </div>
-
+        <!-- Main Navigation Cards -->
         <section>
-            <h2 style="color: var(--accent-cyan); margin-bottom: 25px;">🔍 Available Labs</h2>
+            <h2 style="color: var(--accent-cyan); margin-bottom: 25px; font-size: 2rem;">🚀 Platform Features</h2>
             
             <div class="cards-grid">
-                <!-- XSS Labs -->
+                <div class="card" onclick="window.location.href='tools.html'">
+                    <div class="card-icon">🛠️</div>
+                    <div class="card-title">Bug Bounty Tools</div>
+                    <div class="card-description">
+                        Interactive frontend tools for domain enumeration, command generation, and payload encoding
+                    </div>
+                    <a href="tools.html" class="card-link">Explore Tools →</a>
+                </div>
+
+                <div class="card" onclick="window.location.href='payloads.html'">
+                    <div class="card-icon">💉</div>
+                    <div class="card-title">Payload Library</div>
+                    <div class="card-description">
+                        Comprehensive collection of XSS, SQLi, SSTI, and other vulnerability payloads organized by type
+                    </div>
+                    <a href="payloads.html" class="card-link">View Payloads →</a>
+                </div>
+
+                <div class="card" onclick="window.location.href='methodology.html'">
+                    <div class="card-icon">📋</div>
+                    <div class="card-title">Methodology</div>
+                    <div class="card-description">
+                        Professional bug bounty methodology covering the five phases of security assessment
+                    </div>
+                    <a href="methodology.html" class="card-link">Read Methodology →</a>
+                </div>
+
+                <div class="card" onclick="window.location.href='recon.html'">
+                    <div class="card-icon">🔍</div>
+                    <div class="card-title">Recon Techniques</div>
+                    <div class="card-description">
+                        Advanced reconnaissance strategies including subdomain discovery, JS hunting, and API enumeration
+                    </div>
+                    <a href="recon.html" class="card-link">Learn Recon →</a>
+                </div>
+
+                <div class="card" onclick="window.location.href='notes.html'">
+                    <div class="card-icon">📝</div>
+                    <div class="card-title">Cheatsheets</div>
+                    <div class="card-description">
+                        Quick reference guides for WAF fingerprinting, HTTP codes, IDOR testing, and account takeover
+                    </div>
+                    <a href="notes.html" class="card-link">View Cheatsheets →</a>
+                </div>
+
                 <div class="card" onclick="window.location.href='labs/xss/reflected.html'">
-                    <div class="card-icon">🔴</div>
-                    <div class="card-title">Reflected XSS</div>
+                    <div class="card-icon">🧪</div>
+                    <div class="card-title">Practice Labs</div>
                     <div class="card-description">
-                        Learn about Reflected Cross-Site Scripting vulnerabilities using innerHTML
+                        Hands-on security labs for practicing XSS, SQLi, and other vulnerabilities in a safe environment
                     </div>
-                    <div class="card-difficulty difficulty-beginner">⭐ Beginner</div>
-                    <a href="labs/xss/reflected.html" class="card-link">Launch Lab →</a>
-                </div>
-
-                <div class="card" onclick="window.location.href='labs/xss/dom.html'">
-                    <div class="card-icon">🟠</div>
-                    <div class="card-title">DOM-based XSS</div>
-                    <div class="card-description">
-                        Explore DOM-based XSS vulnerabilities through URL hash manipulation
-                    </div>
-                    <div class="card-difficulty difficulty-intermediate">⭐⭐ Intermediate</div>
-                    <a href="labs/xss/dom.html" class="card-link">Launch Lab →</a>
-                </div>
-
-                <div class="card" onclick="window.location.href='labs/xss/stored.html'">
-                    <div class="card-icon">🔵</div>
-                    <div class="card-title">Stored XSS</div>
-                    <div class="card-description">
-                        Discover persistent XSS vulnerabilities using localStorage
-                    </div>
-                    <div class="card-difficulty difficulty-intermediate">⭐⭐ Intermediate</div>
-                    <a href="labs/xss/stored.html" class="card-link">Launch Lab →</a>
-                </div>
-
-                <!-- SQL Injection Simulator -->
-                <div class="card" onclick="window.location.href='labs/sqli/simulator.html'">
-                    <div class="card-icon">💾</div>
-                    <div class="card-title">SQL Injection Simulator</div>
-                    <div class="card-description">
-                        Practice SQL injection techniques in a simulated database environment
-                    </div>
-                    <div class="card-difficulty difficulty-beginner">⭐ Beginner</div>
-                    <a href="labs/sqli/simulator.html" class="card-link">Launch Lab →</a>
-                </div>
-
-                <!-- Account Takeover Lab -->
-                <div class="card" onclick="window.location.href='labs/account-takeover/ato.html'">
-                    <div class="card-icon">🔐</div>
-                    <div class="card-title">Account Takeover</div>
-                    <div class="card-description">
-                        Learn about logic flaws in authentication and session management
-                    </div>
-                    <div class="card-difficulty difficulty-advanced">⭐⭐⭐ Advanced</div>
-                    <a href="labs/account-takeover/ato.html" class="card-link">Launch Lab →</a>
-                </div>
-
-                <!-- Rate Limiting Lab -->
-                <div class="card" onclick="window.location.href='labs/rate-limiting/brute-force.html'">
-                    <div class="card-icon">⚡</div>
-                    <div class="card-title">Rate Limiting</div>
-                    <div class="card-description">
-                        Understand the importance of rate limiting and brute force protection
-                    </div>
-                    <div class="card-difficulty difficulty-beginner">⭐ Beginner</div>
-                    <a href="labs/rate-limiting/brute-force.html" class="card-link">Launch Lab →</a>
+                    <a href="labs/xss/reflected.html" class="card-link">Access Labs →</a>
                 </div>
             </div>
         </section>
 
-        <section class="info-box" style="margin-top: 40px;">
-            <h4>🎓 Learning Objectives</h4>
-            <p>By completing these labs, you will learn:</p>
-            <ul>
-                <li><strong>Identification:</strong> How to recognize security vulnerabilities in web applications</li>
-                <li><strong>Exploitation:</strong> How attackers exploit these vulnerabilities (in a safe environment)</li>
-                <li><strong>Impact:</strong> The potential damage these vulnerabilities can cause</li>
-                <li><strong>Prevention:</strong> Best practices and secure coding techniques to prevent these issues</li>
-                <li><strong>Remediation:</strong> How to fix existing vulnerabilities in production code</li>
+        <!-- Platform Info -->
+        <section class="section" style="margin-top: 40px;">
+            <h3 style="color: var(--accent-green); margin-bottom: 15px;">💡 About This Platform</h3>
+            <p style="margin-bottom: 15px;">
+                The Bug Bounty Command Center is your personal security research dashboard. Whether you're
+                hunting for vulnerabilities, learning new techniques, or organizing your knowledge, this
+                platform provides the tools and resources you need.
+            </p>
+            <h4 style="color: var(--accent-cyan); margin-top: 20px; margin-bottom: 10px;">Key Features:</h4>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>Interactive Tools:</strong> Generate domain variants, bug bounty commands, and encode payloads</li>
+                <li><strong>Payload Library:</strong> Organized collection of payloads for various vulnerability types</li>
+                <li><strong>Comprehensive Methodology:</strong> Step-by-step guide for professional security assessments</li>
+                <li><strong>Recon Knowledge Base:</strong> Advanced techniques for reconnaissance and enumeration</li>
+                <li><strong>Quick Reference:</strong> Cheatsheets for common testing scenarios and checklists</li>
+                <li><strong>Practice Labs:</strong> Safe environment to learn and practice vulnerability exploitation</li>
             </ul>
         </section>
 
-        <section class="info-box">
-            <h4>🔒 Ethical Hacking Guidelines</h4>
-            <ul>
-                <li>These labs demonstrate real vulnerabilities for educational purposes</li>
-                <li><strong>NEVER</strong> test these techniques on websites you don't own</li>
-                <li>Always get written permission before performing security testing</li>
-                <li>Unauthorized testing is illegal and unethical</li>
-                <li>Use this knowledge to build more secure applications</li>
-                <li>Report vulnerabilities responsibly through proper channels</li>
+        <!-- Disclaimer -->
+        <section class="info-box" style="margin-top: 30px;">
+            <h4>⚖️ Responsible Disclosure</h4>
+            <p style="margin-bottom: 10px;">
+                This platform is designed for security professionals and researchers conducting authorized testing.
+            </p>
+            <ul style="margin-left: 20px;">
+                <li>Always obtain proper authorization before testing</li>
+                <li>Follow responsible disclosure practices</li>
+                <li>Respect program scope and rules of engagement</li>
+                <li>Use knowledge to improve security, not cause harm</li>
             </ul>
         </section>
     </div>
 
+    <!-- Footer -->
     <footer>
-        <div class="footer-disclaimer">
-            ⚠️ DISCLAIMER: This platform is for educational purposes only. All vulnerabilities are simulated
-            and contained within this environment. Misuse of this knowledge on real systems without authorization
-            is illegal.
-        </div>
         <div class="footer-text">
-            © 2026 Bug Bounty Frontend Lab | Learn. Practice. Secure.
+            Bug Bounty Command Center | Your Personal Security Research Platform
         </div>
     </footer>
 
-    <script src="js/common.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

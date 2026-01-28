@@ -1,18 +1,5 @@
 // Bug Bounty Frontend Lab - Common JavaScript Utilities
-
-/**
- * Create and insert warning banner
- */
-function createWarningBanner() {
-    const banner = document.createElement('div');
-    banner.className = 'warning-banner';
-    banner.innerHTML = '⚠️ FOR EDUCATIONAL PURPOSES ONLY - DO NOT USE ON REAL SYSTEMS';
-    
-    const container = document.querySelector('.container');
-    if (container && container.firstChild) {
-        container.insertBefore(banner, container.firstChild);
-    }
-}
+// Kept for backward compatibility with existing lab pages
 
 /**
  * Create breadcrumb navigation
@@ -157,19 +144,18 @@ function addEnterKeyHandler(inputId, callback) {
 }
 
 /**
- * Create educational disclaimer
+ * Create educational disclaimer (for lab pages)
  * @returns {HTMLElement} - Disclaimer element
  */
 function createDisclaimer() {
     const disclaimer = document.createElement('div');
     disclaimer.className = 'info-box';
     disclaimer.innerHTML = `
-        <h4>🔒 Ethical Hacking Guidelines</h4>
-        <ul>
-            <li>These labs demonstrate real vulnerabilities for educational purposes</li>
+        <h4>🔒 Educational Purpose</h4>
+        <ul style="margin-left: 20px;">
+            <li>These labs demonstrate vulnerabilities for learning purposes</li>
             <li>NEVER test these techniques on websites you don't own</li>
             <li>Always get written permission before testing</li>
-            <li>Unauthorized testing is illegal and unethical</li>
             <li>Use this knowledge to build secure applications</li>
         </ul>
     `;
@@ -227,12 +213,9 @@ function createTooltip(content, text) {
 }
 
 /**
- * Initialize page with common elements
+ * Initialize page with common elements (for lab pages)
  */
 function initializePage() {
-    // Add warning banner
-    createWarningBanner();
-    
     // Add disclaimer at bottom if there's a container
     const container = document.querySelector('.container');
     if (container) {

