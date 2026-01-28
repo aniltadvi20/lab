@@ -786,7 +786,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (domainInput) {
         domainInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                generateDomainVariants();
+                // Check if we're on the new tools page
+                if (typeof generateAllCommands === 'function') {
+                    generateAllCommands();
+                } else {
+                    generateDomainVariants();
+                }
             }
         });
     }
@@ -827,3 +832,153 @@ document.addEventListener('DOMContentLoaded', function() {
         firstTab.click();
     }
 });
+
+// ==================== NEW TOOLS PAGE FUNCTIONS ====================
+
+/**
+ * Generate all commands - Main function for new tools page
+ */
+function generateAllCommands() {
+    const domainInput = document.getElementById('domain-input').value.trim();
+    
+    if (!domainInput) {
+        alert('Please enter a domain');
+        return;
+    }
+    
+    const domain = parseDomain(domainInput);
+    
+    updateReconCommands(domain);
+    updateHttpProbingCommands(domain);
+    updateUrlCollectionCommands(domain);
+    updateJsReconCommands(domain);
+    updateParamDiscoveryCommands(domain);
+    updateVulnScanningCommands(domain);
+}
+
+/**
+ * Update individual card commands
+ */
+function updateReconCommands(domain) {
+    const commands = `1 subfinder -d ${domain} -all -recursive
+2 amass enum -passive -d ${domain}
+3 assetfinder --subs-only ${domain}
+4 findomain -t ${domain}
+5 chaos -d ${domain}
+6 crt.sh ${domain}
+7 shosubgo -d ${domain} -s shodan-api-key
+8 subfinder -d ${domain} | httpx -silent`;
+    
+    document.getElementById('recon-commands').textContent = commands;
+}
+
+function updateHttpProbingCommands(domain) {
+    const commands = `1 httpx -l subdomains.txt -o live-hosts.txt
+2 httpx -l subdomains.txt -status-code -title
+3 httpx -l subdomains.txt -tech-detect
+4 httpx -l subdomains.txt -screenshot -o screenshots
+5 httpx -l subdomains.txt -probe -c 50
+6 httpx -l subdomains.txt -fr -sr -mc 200,301,302,403`;
+    
+    document.getElementById('http-probing-commands').textContent = commands;
+}
+
+function updateUrlCollectionCommands(domain) {
+    const commands = `1 waybackurls ${domain}
+2 gau ${domain}
+3 katana -u https://${domain} -d 5
+4 hakrawler -url https://${domain} -depth 3
+5 gospider -s https://${domain} -d 5
+6 waybackurls ${domain} | grep "?"
+7 gau ${domain} --threads 5
+8 katana -u https://${domain} -js-crawl`;
+    
+    document.getElementById('url-collection-commands').textContent = commands;
+}
+
+function updateJsReconCommands(domain) {
+    const commands = `1 subjs -i subdomains.txt
+2 katana -u https://${domain} -js-crawl
+3 gospider -s https://${domain} -c 10 -d 3
+4 httpx -l subdomains.txt | grep -E "\\.js$"
+5 python3 linkfinder.py -i https://${domain}/app.js
+6 python3 SecretFinder.py -i https://${domain}/app.js
+7 nuclei -l js-files.txt -t exposures/tokens/`;
+    
+    document.getElementById('js-recon-commands').textContent = commands;
+}
+
+function updateParamDiscoveryCommands(domain) {
+    const commands = `1 paramspider -d ${domain}
+2 arjun -u https://${domain}/endpoint
+3 x8 -u https://${domain}/endpoint -w params.txt
+4 waybackurls ${domain} | grep "?" | unfurl keys
+5 gau ${domain} | grep "=" | qsreplace test
+6 ffuf -u https://${domain}/endpoint?FUZZ=test -w params.txt`;
+    
+    document.getElementById('param-discovery-commands').textContent = commands;
+}
+
+function updateVulnScanningCommands(domain) {
+    const commands = `1 nuclei -l live-hosts.txt -t cves/
+2 nuclei -l live-hosts.txt -t vulnerabilities/
+3 nuclei -l live-hosts.txt -t exposures/
+4 nuclei -l live-hosts.txt -t misconfiguration/
+5 nuclei -l live-hosts.txt -t takeovers/
+6 nuclei -u https://${domain} -as
+7 nikto -h https://${domain}`;
+    
+    document.getElementById('vuln-scanning-commands').textContent = commands;
+}
+
+/**
+ * Copy individual card commands
+ */
+function copyCardCommands(cardId) {
+    const commandText = document.getElementById(cardId).textContent;
+    
+    navigator.clipboard.writeText(commandText).then(() => {
+        const card = document.getElementById(cardId).closest('.command-card');
+        const button = card.querySelector('.copy-btn');
+        
+        const originalText = button.textContent;
+        button.textContent = '✓ Copied';
+        button.style.background = '#00ff41';
+        button.style.color = '#000';
+        
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.style.background = '';
+            button.style.color = '';
+        }, 2000);
+    }).catch(err => {
+        console.error('Copy failed:', err);
+    });
+}
+
+/**
+ * Copy all commands from all cards
+ */
+function copyAllCommands() {
+    const allCards = document.querySelectorAll('.command-list');
+    let allCommands = '';
+    
+    allCards.forEach((card, index) => {
+        if (index > 0) allCommands += '\n\n';
+        allCommands += card.textContent;
+    });
+    
+    navigator.clipboard.writeText(allCommands).then(() => {
+        const button = document.querySelector('.copy-all-btn');
+        const originalText = button.textContent;
+        button.textContent = '✓ All Copied';
+        button.style.background = '#00ff41';
+        
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.style.background = '';
+        }, 2000);
+    });
+}
+
+// ==================== END NEW TOOLS PAGE FUNCTIONS ====================
