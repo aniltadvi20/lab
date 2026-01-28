@@ -5,6 +5,7 @@
     --bg-primary: #0a0e27;
     --bg-secondary: #0d1117;
     --bg-card: #1a1d29;
+    --bg-card-hover: #212530;
     --text-primary: #e6edf3;
     --text-secondary: #8b949e;
     --accent-green: #00ff41;
@@ -13,6 +14,7 @@
     --warning-red: #ff3860;
     --text-white: #ffffff;
     --border-color: #30363d;
+    --border-hover: var(--accent-cyan);
 }
 
 * {
@@ -832,4 +834,241 @@ html {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Tools Page Grid Layout */
+.tools-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.tools-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.tools-header h1 {
+    color: var(--accent-green);
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+}
+
+.tools-header .subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.tools-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Tool Cards */
+.tool-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.tool-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 4px 20px rgba(0, 217, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.tool-header {
+    margin-bottom: 20px;
+}
+
+.tool-title {
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.tool-description {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.tool-input {
+    margin-bottom: 16px;
+}
+
+.tool-input-field {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.tool-input-field:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+}
+
+.tool-input-field::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.tool-generate-btn {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+    color: #000;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    font-size: 14px;
+}
+
+.tool-generate-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(0, 255, 65, 0.3);
+}
+
+.tool-output {
+    margin-top: 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 16px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    max-height: 500px;
+    overflow-y: auto;
+    display: none;
+}
+
+.tool-output.show {
+    display: block;
+}
+
+.output-section {
+    margin-bottom: 20px;
+}
+
+.output-section h4 {
+    color: var(--accent-cyan);
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.output-section pre {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 12px;
+    margin: 8px 0;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    position: relative;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.copy-section-btn {
+    background: transparent;
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.copy-section-btn:hover {
+    background: var(--accent-cyan);
+    color: #000;
+}
+
+.copy-all-btn {
+    background: var(--accent-green);
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.copy-all-btn:hover {
+    background: var(--accent-green-hover);
+    transform: scale(1.02);
+}
+
+.domain-variants-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.domain-variants-list li {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    color: var(--accent-cyan);
+    font-size: 13px;
+}
+
+/* Responsive Grid Layout */
+@media (min-width: 1024px) {
+    .tools-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tools-header h1 {
+        font-size: 2rem;
+    }
+    
+    .tool-title {
+        font-size: 18px;
+    }
 }
