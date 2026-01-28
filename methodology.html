@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Methodology | Command Center</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">⚡ BB Command Center</a>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="tools.html" class="nav-link">Tools</a></li>
+                <li class="nav-item"><a href="payloads.html" class="nav-link">Payloads</a></li>
+                <li class="nav-item"><a href="methodology.html" class="nav-link">Methodologies</a></li>
+                <li class="nav-item"><a href="recon.html" class="nav-link">Recon</a></li>
+                <li class="nav-item"><a href="notes.html" class="nav-link">Notes</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="color: var(--accent-green); font-size: 2.5rem; margin: 30px 0 15px;">📋 Bug Bounty Testing Methodology</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 40px; font-size: 1.1rem;">
+            A systematic approach to finding security vulnerabilities - follow these 5 phases for comprehensive testing
+        </p>
+
+        <!-- Phase 1: Reconnaissance -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 20px;">🔍 Phase 1: Reconnaissance</h2>
+            
+            <h3 style="color: var(--accent-green); margin-top: 25px;">🎯 Goals</h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">
+                Understand the target application's architecture, technology stack, and attack surface. 
+                Gather as much information as possible without directly interacting with the target yet.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">📝 What to Test</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li><strong>Subdomain enumeration</strong> - Find all subdomains and services</li>
+                <li><strong>Technology fingerprinting</strong> - Identify frameworks, servers, CDNs</li>
+                <li><strong>Third-party integrations</strong> - APIs, payment gateways, analytics</li>
+                <li><strong>Public information</strong> - GitHub repos, job postings, social media</li>
+                <li><strong>DNS records</strong> - MX, TXT, SPF, DMARC records</li>
+                <li><strong>IP ranges & ASN</strong> - Network infrastructure mapping</li>
+                <li><strong>Historical data</strong> - Wayback Machine, certificate transparency logs</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">🛠️ Tools</h3>
+            <div class="code-block">
+                <code># Subdomain enumeration
+subfinder -d target.com -all -recursive
+assetfinder --subs-only target.com
+amass enum -d target.com
+
+# DNS reconnaissance
+dig target.com ANY
+dnsenum target.com
+
+# Certificate transparency
+curl -s "https://crt.sh/?q=%25.target.com&output=json" | jq
+
+# Technology detection
+whatweb target.com
+wappalyzer
+
+# Wayback URLs
+waybackurls target.com
+gau target.com</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">⚠️ Common Mistakes</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li>Skipping reconnaissance and jumping straight to testing</li>
+                <li>Not documenting findings systematically</li>
+                <li>Ignoring subdomains and focusing only on the main domain</li>
+                <li>Not checking for exposed credentials in GitHub/Pastebin</li>
+                <li>Overlooking mobile apps and their APIs</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">💭 Mindset</h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">
+                <em>"The more you know about the target, the better your chances of finding vulnerabilities. 
+                Recon is where most bugs are found indirectly - through forgotten subdomains, exposed services, 
+                and legacy systems."</em>
+            </p>
+        </section>
+
+        <!-- Phase 2: Mapping & Enumeration -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 20px;">🗺️ Phase 2: Mapping & Enumeration</h2>
+            
+            <h3 style="color: var(--accent-green); margin-top: 25px;">🎯 Goals</h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">
+                Map out all endpoints, parameters, and functionality. Understand how the application works, 
+                what data it processes, and how different components interact with each other.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">📝 What to Test</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li><strong>URL enumeration</strong> - Crawl and spider all accessible pages</li>
+                <li><strong>API endpoint discovery</strong> - Document all API routes and methods</li>
+                <li><strong>Parameter discovery</strong> - Find hidden parameters in requests</li>
+                <li><strong>JavaScript files</strong> - Extract endpoints and secrets from JS</li>
+                <li><strong>Authentication flows</strong> - Map login, registration, password reset</li>
+                <li><strong>User roles</strong> - Identify different privilege levels</li>
+                <li><strong>File upload functionality</strong> - Document upload mechanisms</li>
+                <li><strong>Input validation points</strong> - Catalog all user input fields</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">🛠️ Tools</h3>
+            <div class="code-block">
+                <code># Web crawling
+katana -u https://target.com -js-crawl -depth 3
+gospider -s https://target.com -c 10 -d 3
+
+# Content discovery
+ffuf -u https://target.com/FUZZ -w wordlist.txt
+dirsearch -u https://target.com
+
+# Parameter discovery
+arjun -u https://target.com
+paramspider -d target.com
+
+# JavaScript analysis
+subjs -i domains.txt
+python3 linkfinder.py -i https://target.com -o results.html
+
+# API enumeration
+kiterunner scan https://target.com -w routes.txt
+
+# Proxy/Manual exploration
+Burp Suite Pro
+OWASP ZAP</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">⚠️ Common Mistakes</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li>Relying only on automated tools without manual exploration</li>
+                <li>Not testing with different user roles and privilege levels</li>
+                <li>Ignoring API documentation or GraphQL introspection</li>
+                <li>Missing mobile API endpoints</li>
+                <li>Not analyzing JavaScript thoroughly for hidden endpoints</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">💭 Mindset</h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">
+                <em>"Every input field, every parameter, every endpoint is a potential vulnerability. 
+                The goal is to know the application better than its developers do."</em>
+            </p>
+        </section>
+
+        <!-- Phase 3: Vulnerability Discovery -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 20px;">🔎 Phase 3: Vulnerability Discovery</h2>
+            
+            <h3 style="color: var(--accent-green); margin-top: 25px;">🎯 Goals</h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">
+                Actively test for security vulnerabilities using the information gathered in previous phases. 
+                Focus on high-impact bugs first, then work your way through the OWASP Top 10 and beyond.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">📝 What to Test</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li><strong>Injection flaws</strong> - SQL, NoSQL, Command, LDAP injection</li>
+                <li><strong>Broken authentication</strong> - Session fixation, weak passwords, 2FA bypass</li>
+                <li><strong>Sensitive data exposure</strong> - API keys, tokens, PII leaks</li>
+                <li><strong>XXE & XXE-based attacks</strong> - XML external entity processing</li>
+                <li><strong>Broken access control</strong> - IDOR, privilege escalation, forced browsing</li>
+                <li><strong>Security misconfiguration</strong> - Default credentials, verbose errors</li>
+                <li><strong>XSS</strong> - Reflected, stored, DOM-based cross-site scripting</li>
+                <li><strong>Insecure deserialization</strong> - Object injection attacks</li>
+                <li><strong>Known vulnerable components</strong> - Outdated libraries and frameworks</li>
+                <li><strong>Insufficient logging</strong> - Missing security events</li>
+                <li><strong>SSRF</strong> - Server-side request forgery</li>
+                <li><strong>CSRF</strong> - Cross-site request forgery</li>
+                <li><strong>Business logic flaws</strong> - Race conditions, price manipulation</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">🛠️ Tools</h3>
+            <div class="code-block">
+                <code># Automated scanning
+nuclei -l targets.txt -t cves/ -t vulnerabilities/
+nikto -h https://target.com
+
+# XSS testing
+dalfox url https://target.com/page?param=value
+XSStrike
+
+# SQLi testing
+sqlmap -u "https://target.com/page?id=1" --batch
+ghauri -u "https://target.com/page?id=1"
+
+# SSRF testing
+ssrfmap -r request.txt
+interactsh-client
+
+# Fuzzing
+ffuf -u https://target.com/FUZZ -w payloads.txt
+wfuzz -u https://target.com/?param=FUZZ -w xss.txt
+
+# Manual testing
+Burp Suite Intruder
+Burp Suite Repeater</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">⚠️ Common Mistakes</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li>Testing only obvious inputs and ignoring edge cases</li>
+                <li>Not testing different HTTP methods (GET, POST, PUT, DELETE, PATCH)</li>
+                <li>Giving up after a WAF blocks your requests</li>
+                <li>Not chaining vulnerabilities for higher impact</li>
+                <li>Focusing only on technical bugs and missing business logic flaws</li>
+                <li>Not testing mobile apps separately from web applications</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">💭 Mindset</h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">
+                <em>"Think like an attacker, not a pentester. Don't just test for textbook vulnerabilities - 
+                understand the business logic and find creative ways to abuse it. The best bugs are often 
+                found by asking 'What if I do this unexpected thing?'"</em>
+            </p>
+        </section>
+
+        <!-- Phase 4: Exploitation & Validation -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 20px;">💥 Phase 4: Exploitation & Validation</h2>
+            
+            <h3 style="color: var(--accent-green); margin-top: 25px;">🎯 Goals</h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">
+                Prove the impact of discovered vulnerabilities with proof-of-concept exploits. 
+                Validate that the bug is real and demonstrate its severity without causing harm.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">📝 What to Test</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li><strong>Create PoC</strong> - Develop working exploits that demonstrate impact</li>
+                <li><strong>Test impact</strong> - Show data exfiltration, privilege escalation, etc.</li>
+                <li><strong>Reproduce reliably</strong> - Ensure the bug is consistent</li>
+                <li><strong>Document steps</strong> - Write clear reproduction steps</li>
+                <li><strong>Test fixes</strong> - Verify patches don't introduce new issues</li>
+                <li><strong>Chain vulnerabilities</strong> - Combine bugs for greater impact</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">🛠️ Tools</h3>
+            <div class="code-block">
+                <code># Generate PoC
+curl, wget, Python requests
+Postman collections
+Custom scripts
+
+# Screenshots & recordings
+Burp Suite screenshot tool
+FFMPEG for video PoC
+Browser developer tools
+
+# Traffic analysis
+Wireshark
+tcpdump
+
+# Exploitation frameworks (for authorized testing only)
+Metasploit
+BeEF (Browser Exploitation Framework)</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">⚠️ Common Mistakes</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li>Not providing enough evidence of impact</li>
+                <li>Submitting false positives without proper validation</li>
+                <li>Causing damage or data loss while testing exploits</li>
+                <li>Not explaining the security impact clearly</li>
+                <li>Submitting bugs that are out of scope</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">💭 Mindset</h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">
+                <em>"The goal isn't just to find a bug - it's to help the company understand why it matters. 
+                A well-documented PoC with clear impact is worth 10x more than a vague report."</em>
+            </p>
+        </section>
+
+        <!-- Phase 5: Reporting & Validation -->
+        <section class="section">
+            <h2 style="color: var(--accent-cyan); margin-bottom: 20px;">📝 Phase 5: Reporting & Validation</h2>
+            
+            <h3 style="color: var(--accent-green); margin-top: 25px;">🎯 Goals</h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">
+                Write professional, actionable reports that help developers understand and fix the vulnerability. 
+                Maintain good communication throughout the triage and remediation process.
+            </p>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">📝 What to Include</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li><strong>Clear title</strong> - Concise summary of the vulnerability</li>
+                <li><strong>Severity rating</strong> - CVSS score or platform severity</li>
+                <li><strong>Vulnerability description</strong> - What the bug is and why it matters</li>
+                <li><strong>Affected components</strong> - URLs, endpoints, parameters</li>
+                <li><strong>Reproduction steps</strong> - Clear, numbered steps to reproduce</li>
+                <li><strong>Proof of concept</strong> - Code, screenshots, videos</li>
+                <li><strong>Impact analysis</strong> - Real-world consequences</li>
+                <li><strong>Remediation advice</strong> - How to fix it (optional but helpful)</li>
+                <li><strong>References</strong> - OWASP, CVE, CWE links</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">🛠️ Report Template</h3>
+            <div class="code-block">
+                <code>**Title:** [Type] in [Feature] leads to [Impact]
+
+**Severity:** High
+
+**Description:**
+The application is vulnerable to [vulnerability type] in the [affected feature]. 
+An attacker can exploit this to [describe attack scenario].
+
+**Steps to Reproduce:**
+1. Navigate to https://target.com/vulnerable-page
+2. Enter the following payload in [parameter]: [payload]
+3. Observe that [what happens]
+4. This allows [describe impact]
+
+**Proof of Concept:**
+[Include curl command, screenshots, or video]
+
+**Impact:**
+This vulnerability allows an attacker to:
+- [Impact point 1]
+- [Impact point 2]
+- [Impact point 3]
+
+**Remediation:**
+To fix this vulnerability, consider:
+- [Recommendation 1]
+- [Recommendation 2]
+
+**References:**
+- OWASP: [relevant link]
+- CWE: [relevant CWE]</code>
+            </div>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">⚠️ Common Mistakes</h3>
+            <ul style="color: var(--text-primary); margin-left: 25px; line-height: 1.8;">
+                <li>Writing vague or unclear reports</li>
+                <li>Not providing enough detail for developers to reproduce</li>
+                <li>Being rude or demanding in communication</li>
+                <li>Spamming with duplicate or low-quality reports</li>
+                <li>Not following up when the team asks for clarification</li>
+                <li>Publicly disclosing before the fix is deployed</li>
+            </ul>
+
+            <h3 style="color: var(--accent-green); margin-top: 25px;">💭 Mindset</h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">
+                <em>"You're helping the company, not attacking them. Professional, detailed reports build 
+                your reputation and lead to higher rewards. Remember: triagers are human too - treat them 
+                with respect and patience."</em>
+            </p>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="info-box">
+            <h4>💡 Overall Best Practices</h4>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>Stay organized:</strong> Use tools like Notion, Obsidian, or spreadsheets to track targets and findings</li>
+                <li><strong>Take breaks:</strong> Fresh eyes find more bugs</li>
+                <li><strong>Learn continuously:</strong> Read writeups, follow researchers, practice on labs</li>
+                <li><strong>Focus on quality:</strong> One high-impact bug beats ten low-severity duplicates</li>
+                <li><strong>Build automation:</strong> Create scripts to speed up repetitive tasks</li>
+                <li><strong>Stay ethical:</strong> Always respect scope, don't cause harm, follow responsible disclosure</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-text">
+            Bug Bounty Command Center | Your Personal Security Research Platform
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
