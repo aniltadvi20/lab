@@ -8,8 +8,8 @@ function parseDomain(input) {
     let domain = input.replace(/^https?:\/\//, '');
     // Remove www if present
     domain = domain.replace(/^www\./, '');
-    // Remove trailing slash and path
-    domain = domain.split('/')[0];
+    // Remove trailing slash, path, query params, and fragments
+    domain = domain.split('/')[0].split('?')[0].split('#')[0];
     return domain.trim();
 }
 
@@ -296,7 +296,7 @@ waybackurls ${domain} | tee wayback-urls.txt`
         {
             title: 'GetAllUrls (GAU)',
             content: `# GetAllUrls (GAU)
-gau ${domain} --threads 5 --o gau-urls.txt`
+gau ${domain} --threads 5 -o gau-urls.txt`
         },
         {
             title: 'Katana Crawler',

@@ -41,7 +41,7 @@
                     <p class="tool-description">Generate comprehensive reconnaissance commands and domain variants for your target.</p>
                 </div>
                 <div class="tool-input">
-                    <input type="text" id="input-command-gen" class="tool-input-field" placeholder="example.com">
+                    <input type="text" id="input-command-gen" class="tool-input-field" placeholder="example.com" aria-label="Domain name input for bug bounty command generator">
                 </div>
                 <button class="tool-generate-btn" onclick="generateBugBountyCommands()">Generate</button>
                 <div class="tool-output" id="output-command-gen"></div>
@@ -54,7 +54,7 @@
                     <p class="tool-description">Specialized subdomain discovery command generator.</p>
                 </div>
                 <div class="tool-input">
-                    <input type="text" id="input-subdomain" class="tool-input-field" placeholder="example.com">
+                    <input type="text" id="input-subdomain" class="tool-input-field" placeholder="example.com" aria-label="Domain name input for subdomain recon toolkit">
                 </div>
                 <button class="tool-generate-btn" onclick="generateSubdomainCommands()">Generate</button>
                 <div class="tool-output" id="output-subdomain"></div>
@@ -67,7 +67,7 @@
                     <p class="tool-description">Aggregate URLs from multiple sources for deeper reconnaissance.</p>
                 </div>
                 <div class="tool-input">
-                    <input type="text" id="input-urls" class="tool-input-field" placeholder="example.com">
+                    <input type="text" id="input-urls" class="tool-input-field" placeholder="example.com" aria-label="Domain name input for URL collection toolkit">
                 </div>
                 <button class="tool-generate-btn" onclick="generateUrlCommands()">Generate</button>
                 <div class="tool-output" id="output-urls"></div>
@@ -80,7 +80,7 @@
                     <p class="tool-description">Find hidden parameters and test for parameter-based vulnerabilities.</p>
                 </div>
                 <div class="tool-input">
-                    <input type="text" id="input-params" class="tool-input-field" placeholder="example.com or URL">
+                    <input type="text" id="input-params" class="tool-input-field" placeholder="example.com or URL" aria-label="Domain or URL input for parameter discovery">
                 </div>
                 <button class="tool-generate-btn" onclick="generateParamCommands()">Generate</button>
                 <div class="tool-output" id="output-params"></div>
@@ -93,7 +93,7 @@
                     <p class="tool-description">Discover and enumerate API endpoints and generate test requests.</p>
                 </div>
                 <div class="tool-input">
-                    <input type="text" id="input-api" class="tool-input-field" placeholder="example.com">
+                    <input type="text" id="input-api" class="tool-input-field" placeholder="example.com" aria-label="Domain name input for API recon toolkit">
                 </div>
                 <button class="tool-generate-btn" onclick="generateApiCommands()">Generate</button>
                 <div class="tool-output" id="output-api"></div>
@@ -106,7 +106,7 @@
                     <p class="tool-description">Extract and analyze JavaScript files for endpoints, secrets, and logic flaws.</p>
                 </div>
                 <div class="tool-input">
-                    <input type="text" id="input-js" class="tool-input-field" placeholder="example.com">
+                    <input type="text" id="input-js" class="tool-input-field" placeholder="example.com" aria-label="Domain name input for JavaScript recon toolkit">
                 </div>
                 <button class="tool-generate-btn" onclick="generateJsCommands()">Generate</button>
                 <div class="tool-output" id="output-js"></div>
